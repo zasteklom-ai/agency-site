@@ -1,0 +1,74 @@
+@import url("https://fonts.googleapis.com/css2?family=Philosopher:wght@400;700&family=Mulish:wght@300;400;500;600;700;800&display=swap");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 40 23% 97%;
+    --foreground: 0 0% 12%;
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 12%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 12%;
+    --primary: 37 39% 57%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 40 20% 93%;
+    --secondary-foreground: 0 0% 12%;
+    --muted: 40 15% 92%;
+    --muted-foreground: 0 0% 42%;
+    --accent: 37 39% 57%;
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 70% 45%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 37 20% 85%;
+    --input: 37 20% 82%;
+    --ring: 37 39% 57%;
+    --radius: 0.5rem;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: "Mulish", sans-serif;
+  }
+
+  .font-display {
+    font-family: "Philosopher", serif;
+  }
+
+  ::selection {
+    background: hsl(37 39% 57% / 0.3);
+  }
+}
+
+@layer components {
+  .gold-text {
+    @apply text-[#bb9c69];
+  }
+
+  .section-dark {
+    background: #1a1a1a;
+    color: #f5f2ec;
+  }
+
+  .btn-gold {
+    @apply inline-flex items-center justify-center gap-2 bg-[#bb9c69] px-8 py-4 text-sm font-semibold uppercase tracking-[0.15em] text-white transition-all duration-300 hover:bg-[#a9874d] hover:shadow-lg;
+  }
+
+  .btn-outline-gold {
+    @apply inline-flex items-center justify-center gap-2 border border-[#bb9c69] bg-transparent px-8 py-4 text-sm font-semibold uppercase tracking-[0.15em] text-[#bb9c69] transition-all duration-300 hover:bg-[#bb9c69] hover:text-white;
+  }
+
+  .container-site {
+    @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  }
+}
