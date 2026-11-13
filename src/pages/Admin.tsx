@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router";
 import { trpc } from "@/providers/trpc";
 import { formatPrice } from "@/components/CottageCard";
 import { CottageEditForm } from "@/components/CottageEditForm";
@@ -55,7 +56,7 @@ export default function Admin() {
           className="w-full max-w-sm bg-[#1f1f1f] p-8 text-white"
         >
           <h1 className="font-display text-2xl font-bold">
-            Панель <span className="text-[#bb9c69]">управления</span>
+            Панель <span className="text-[#45c1af]">управления</span>
           </h1>
           <p className="mt-2 text-sm text-white/50">
             Введите пароль администратора
@@ -65,7 +66,7 @@ export default function Admin() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Пароль"
-            className="mt-6 w-full border border-white/20 bg-transparent px-4 py-3 text-sm outline-none focus:border-[#bb9c69]"
+            className="mt-6 w-full border border-white/20 bg-transparent px-4 py-3 text-sm outline-none focus:border-[#45c1af]"
           />
           {loginError && (
             <p className="mt-2 text-sm text-red-400">{loginError}</p>
@@ -73,7 +74,7 @@ export default function Admin() {
           <button
             type="submit"
             disabled={login.isPending}
-            className="btn-gold mt-4 w-full"
+            className="btn-brand mt-4 w-full"
           >
             Войти
           </button>
@@ -83,7 +84,7 @@ export default function Admin() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f9f7f2] pt-20">
+    <div className="min-h-screen bg-[#f2f6f4] pt-20">
       <div className="container-site py-8">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <h1 className="font-display text-2xl font-bold text-[#1f1f1f]">
@@ -93,7 +94,7 @@ export default function Admin() {
             {tab === "cottages" && (
               <button
                 onClick={() => setCreating(true)}
-                className="bg-[#bb9c69] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#a9874d]"
+                className="bg-[#1f7567] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#185f54]"
               >
                 + Добавить объект
               </button>
@@ -109,8 +110,8 @@ export default function Admin() {
                 onClick={() => setTab(key)}
                 className={`px-4 py-2 text-sm transition-colors ${
                   tab === key
-                    ? "bg-[#bb9c69] text-white"
-                    : "border border-[#ddd5c3] hover:border-[#bb9c69]"
+                    ? "bg-[#1f7567] text-white"
+                    : "border border-[#d8dcd9] hover:border-[#1f7567]"
                 }`}
               >
                 {label}
@@ -121,7 +122,7 @@ export default function Admin() {
                 sessionStorage.removeItem(TOKEN_KEY);
                 setToken("");
               }}
-              className="border border-[#ddd5c3] px-4 py-2 text-sm text-[#1f1f1f]/60 hover:border-red-400 hover:text-red-500"
+              className="border border-[#d8dcd9] px-4 py-2 text-sm text-[#1f1f1f]/60 hover:border-red-400 hover:text-red-500"
             >
               Выйти
             </button>
@@ -132,7 +133,7 @@ export default function Admin() {
           <div className="mt-6 overflow-x-auto bg-white shadow-sm">
             <table className="w-full min-w-[800px] text-sm">
               <thead>
-                <tr className="border-b border-[#e8e2d5] text-left text-xs uppercase tracking-wider text-[#1f1f1f]/50">
+                <tr className="border-b border-[#e3e7e4] text-left text-xs uppercase tracking-wider text-[#1f1f1f]/50">
                   <th className="p-4">Объект</th>
                   <th className="p-4">Район</th>
                   <th className="p-4">Цена / сутки</th>
@@ -144,7 +145,7 @@ export default function Admin() {
                 {items?.map((c) => (
                   <tr
                     key={c.id}
-                    className="border-b border-[#f0ece2] hover:bg-[#f9f7f2]"
+                    className="border-b border-[#eef1ef] hover:bg-[#f2f6f4]"
                   >
                     <td className="p-4">
                       <div className="flex items-center gap-3">
@@ -157,7 +158,7 @@ export default function Admin() {
                           <a
                             href={`/cottage/${c.id}`}
                             target="_blank"
-                            className="font-medium text-[#1f1f1f] hover:text-[#bb9c69]"
+                            className="font-medium text-[#1f1f1f] hover:text-[#1f7567]"
                           >
                             {c.title}
                           </a>
@@ -178,7 +179,7 @@ export default function Admin() {
                             updatePrice.mutate({ token, id: c.id, price: v });
                           }
                         }}
-                        className="w-28 border border-transparent bg-transparent px-2 py-1 hover:border-[#ddd5c3] focus:border-[#bb9c69] focus:outline-none"
+                        className="w-28 border border-transparent bg-transparent px-2 py-1 hover:border-[#d8dcd9] focus:border-[#1f7567] focus:outline-none"
                       />
                       <span className="text-xs text-[#1f1f1f]/40">
                         ({formatPrice(c.price)})
@@ -211,14 +212,20 @@ export default function Admin() {
                       <div className="flex items-center gap-3">
                         <button
                           onClick={() => setEditingId(c.id)}
-                          className="bg-[#bb9c69] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[#a9874d]"
+                          className="bg-[#1f7567] px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-[#185f54]"
                         >
                           Изменить
                         </button>
+                        <Link
+                          to={`/admin/cottages/${c.id}/calendar`}
+                          className="border border-[#d8dcd9] px-3 py-1.5 text-xs text-[#1f1f1f]/70 transition-colors hover:border-[#1f7567] hover:text-[#1f7567]"
+                        >
+                          Календарь
+                        </Link>
                         <a
                           href={`/cottage/${c.id}`}
                           target="_blank"
-                          className="text-xs text-[#bb9c69] hover:underline"
+                          className="text-xs text-[#1f7567] hover:underline"
                         >
                           Открыть →
                         </a>
@@ -235,7 +242,7 @@ export default function Admin() {
           <div className="mt-6 overflow-x-auto bg-white shadow-sm">
             <table className="w-full min-w-[600px] text-sm">
               <thead>
-                <tr className="border-b border-[#e8e2d5] text-left text-xs uppercase tracking-wider text-[#1f1f1f]/50">
+                <tr className="border-b border-[#e3e7e4] text-left text-xs uppercase tracking-wider text-[#1f1f1f]/50">
                   <th className="p-4">Дата</th>
                   <th className="p-4">Имя</th>
                   <th className="p-4">Телефон</th>
@@ -251,7 +258,7 @@ export default function Admin() {
                   </tr>
                 )}
                 {leads?.map((l) => (
-                  <tr key={l.id} className="border-b border-[#f0ece2]">
+                  <tr key={l.id} className="border-b border-[#eef1ef]">
                     <td className="p-4 text-[#1f1f1f]/50">
                       {new Date(l.createdAt).toLocaleString("ru-RU")}
                     </td>
@@ -259,7 +266,7 @@ export default function Admin() {
                     <td className="p-4">
                       <a
                         href={`tel:${l.phone}`}
-                        className="text-[#bb9c69] hover:underline"
+                        className="text-[#1f7567] hover:underline"
                       >
                         {l.phone}
                       </a>
@@ -270,7 +277,7 @@ export default function Admin() {
                         <a
                           href={`/cottage/${l.cottageId}`}
                           target="_blank"
-                          className="ml-2 text-xs text-[#bb9c69] hover:underline"
+                          className="ml-2 text-xs text-[#1f7567] hover:underline"
                         >
                           объект →
                         </a>

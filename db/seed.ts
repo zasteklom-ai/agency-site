@@ -1,6 +1,6 @@
-import { readFileSync } from "fs";
-import { getDb } from "../api/queries/connection";
-import { cottages, cottagePhotos } from "./schema";
+import { readFileSync } from 'fs';
+import { getDb } from '../api/queries/connection';
+import { cottages, cottagePhotos } from './schema';
 
 interface FeedCottage {
   externalId: string;
@@ -26,7 +26,7 @@ interface FeedCottage {
 
 async function main() {
   const data: FeedCottage[] = JSON.parse(
-    readFileSync("/mnt/agents/feed/cottages.json", "utf-8"),
+    readFileSync('./db/seed-data.json', 'utf-8'),
   );
   const db = getDb();
 
@@ -34,12 +34,12 @@ async function main() {
     const photos =
       c.localPhotos.length > 0
         ? c.localPhotos
-        : ["/photos/placeholder.jpg"];
+        : ['/photos/placeholder.jpg'];
     const [result] = await db
       .insert(cottages)
       .values({
         externalId: c.externalId,
-        title: c.title || `Дом №${c.externalId}`,
+        title: c.title || `Коттедж ${c.externalId}`,
         description: c.description,
         address: c.address,
         district: c.district,
@@ -59,7 +59,7 @@ async function main() {
       })
       .onDuplicateKeyUpdate({
         set: {
-          title: c.title || `Дом №${c.externalId}`,
+          title: c.title || `Коттедж ${c.externalId}`,
           description: c.description,
           price: c.price,
         },
@@ -75,7 +75,7 @@ async function main() {
 
     if (!cottageId) continue;
 
-    const { eq } = await import("drizzle-orm");
+    const { eq } = await import('drizzle-orm');
     await db.delete(cottagePhotos).where(eq(cottagePhotos.cottageId, cottageId as number));
 
     await db.insert(cottagePhotos).values(

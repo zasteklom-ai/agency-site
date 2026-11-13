@@ -1,0 +1,113 @@
+import { readFileSync } from "fs";
+import { join } from "path";
+import { getDb } from "../api/queries/connection";
+import { cottages, cottagePhotos } from "./schema";
+import { eq } from "drizzle-orm";
+
+interface FeedCottage {
+  externalId: string;
+  title: string;
+  description: string | null;
+  address: string | null;
+  district: string | null;
+  lat: number | null;
+  lng: number | null;
+  bedrooms: number | null;
+  beds: number | null;
+  totalArea: number | null;
+  landArea: number | null;
+  price: number | null;
+  hasBanya: boolean;
+  hasSauna: boolean;
+  hasPool: boolean;
+  hasKupel: boolean;
+  hasBilliard: boolean;
+  hasBbq: boolean;
+  priceWeekday: number | null;
+  priceFriday: number | null;
+  priceSaturday: number | null;
+  priceWeekend: number | null;
+  priceNewyear: number | null;
+  deposit: number | null;
+  amenities: string | null;
+  status: string;
+}
+
+async function main() {
+  // Читаем файл из папки db/ проекта
+  const filePath = join(process.cwd(), "db", "cottages.json");
+  const fileContent = readFileSync(filePath, "utf-8");
+  const data: FeedCottage[] = JSON.parse(fileContent);
+  
+  const db = getDb();
+
+  console.log(`🌱 Начинаем наполнение базы данными (${data.length} коттеджей)...`);
+
+  for (const c of data) {
+    // 1. Вставляем или обновляем коттедж по externalId
+    await db
+      .insert(cottages)
+      .values({
+        externalId: c.externalId,
+        title: c.title || `Дом №${c.externalId}`,
+        description: c.description,
+        address: c.address,
+        district: c.district,
+        lat: c.lat,
+        lng: c.lng,
+        bedrooms: c.bedrooms,
+        beds: c.beds,
+        totalArea: c.totalArea,
+        landArea: c.landArea,
+        price: c.price,
+        hasBanya: c.hasBanya,
+        hasSauna: c.hasSauna,
+        hasPool: c.hasPool,
+        hasKupel: c.hasKupel,
+        hasBilliard: c.hasBilliard,
+        hasBbq: c.hasBbq,
+        priceWeekday: c.priceWeekday,
+        priceFriday: c.priceFriday,
+        priceSaturday: c.priceSaturday,
+        priceWeekend: c.priceWeekend,
+        priceNewyear: c.priceNewyear,
+        deposit: c.deposit,
+        amenities: c.amenities,
+        status: c.status || "active",
+      })
+      .onDuplicateKeyUpdate({
+        set: {
+          title: c.title || `Дом №${c.externalId}`,
+          description: c.description,
+          price: c.price,
+          status: c.status || "active",
+        },
+      });
+
+    // 2. Получаем ID вставленного коттеджа
+    const cottageRecord = await db.query.cottages.findFirst({
+      where: (t, { eq }) => eq(t.externalId, c.externalId),
+    });
+
+    if (!cottageRecord) continue;
+    const cottageId = cottageRecord.id;
+
+    // 3. Очищаем старые фото и добавляем заглушку (так как в JSON нет массива photos, 
+    // мы добавим одну стандартную картинку-заглушку, чтобы сайт не ломался)
+    await db.delete(cottagePhotos).where(eq(cottagePhotos.cottageId, cottageId));
+
+    await db.insert(cottagePhotos).values({
+      cottageId: cottageId,
+      url: "https://images.unsplash.com/photo-1518780664697-55e3ad937233?auto=format&fit=crop&w=800&q=80", // Красивая заглушка дома
+      sortOrder: 0,
+    });
+  }
+
+  console.log("✅ Успешно добавлено/обновлено коттеджей:", data.length);
+  process.exit(0);
+}
+
+main().catch((err) => {
+  console.error("❌ Ошибка при наполнении базы:", err);
+  process.exit(1);
+});

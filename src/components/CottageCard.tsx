@@ -49,31 +49,31 @@ export function CottageCard({ cottage }: { cottage: CottageCardData }) {
         </div>
       </div>
       <div className="p-5">
-        <h3 className="font-display text-lg leading-snug text-[#1f1f1f] transition-colors group-hover:text-[#bb9c69]">
+        <h3 className="font-display text-lg leading-snug text-[#1f1f1f] transition-colors group-hover:text-[#1f7567]">
           {cottage.title}
         </h3>
         <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[#1f1f1f]/60">
           {cottage.bedrooms != null && (
             <span className="flex items-center gap-1.5">
-              <BedDouble size={14} className="text-[#bb9c69]" />
+              <BedDouble size={14} className="text-[#1f7567]" />
               {cottage.bedrooms} спален
             </span>
           )}
           {cottage.beds != null && (
             <span className="flex items-center gap-1.5">
-              <Users size={14} className="text-[#bb9c69]" />
+              <Users size={14} className="text-[#1f7567]" />
               до {cottage.beds} мест
             </span>
           )}
           {cottage.totalArea != null && (
             <span className="flex items-center gap-1.5">
-              <Maximize size={14} className="text-[#bb9c69]" />
+              <Maximize size={14} className="text-[#1f7567]" />
               {cottage.totalArea} м²
             </span>
           )}
         </div>
-        <div className="mt-4 flex items-baseline justify-between border-t border-[#e8e2d5] pt-4">
-          <span className="font-display text-xl font-bold text-[#bb9c69]">
+        <div className="mt-4 flex items-baseline justify-between border-t border-[#e3e7e4] pt-4">
+          <span className="font-display text-xl font-bold text-[#1f7567]">
             {formatPrice(cottage.price)}
           </span>
           <span className="text-xs uppercase tracking-wider text-[#1f1f1f]/50">

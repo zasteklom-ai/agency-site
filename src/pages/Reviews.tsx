@@ -43,11 +43,11 @@ export default function Reviews() {
       {/* Заголовок */}
       <div className="bg-[#141414] py-20">
         <div className="container-site text-center">
-          <p className="text-xs uppercase tracking-[0.3em] text-[#bb9c69]">
+          <p className="text-xs uppercase tracking-[0.3em] text-[#45c1af]">
             Репутация
           </p>
           <h1 className="font-display mx-auto mt-3 max-w-3xl text-3xl font-bold text-white sm:text-5xl">
-            Отзывы наших <span className="text-[#bb9c69]">гостей</span>
+            Отзывы наших <span className="text-[#45c1af]">гостей</span>
           </h1>
           <p className="mx-auto mt-5 max-w-xl text-sm leading-relaxed text-white/60">
             Мы дорожим каждым отзывом — они помогают нам становиться лучше, а
@@ -60,7 +60,7 @@ export default function Reviews() {
       <section className="container-site py-16">
         <div className="mx-auto max-w-4xl">
           <div className="flex items-center justify-center gap-3 text-center">
-            <Award size={28} className="text-[#bb9c69]" />
+            <Award size={28} className="text-[#1f7567]" />
             <h2 className="font-display text-2xl font-bold text-[#1f1f1f] sm:text-3xl">
               Обладатели высшего уровня сервиса
             </h2>
@@ -73,9 +73,9 @@ export default function Reviews() {
             {SERVICE_AWARDS.map((a) => (
               <div
                 key={a.platform}
-                className="border border-[#e8e2d5] bg-white p-8 text-center"
+                className="border border-[#e3e7e4] bg-white p-8 text-center"
               >
-                <BadgeCheck size={40} className="mx-auto text-[#bb9c69]" />
+                <BadgeCheck size={40} className="mx-auto text-[#1f7567]" />
                 <p className="mt-4 text-xs uppercase tracking-[0.25em] text-[#1f1f1f]/50">
                   {a.platform}
                 </p>
@@ -95,9 +95,9 @@ export default function Reviews() {
       <section className="section-dark py-20">
         <div className="container-site">
           <div className="text-center">
-            <Star size={28} className="mx-auto text-[#bb9c69]" />
+            <Star size={28} className="mx-auto text-[#45c1af]" />
             <h2 className="font-display mt-4 text-3xl font-bold text-white sm:text-4xl">
-              Читайте отзывы <span className="text-[#bb9c69]">на картах</span>
+              Читайте отзывы <span className="text-[#45c1af]">на картах</span>
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-white/60">
               Все отзывы размещены на независимых площадках — мы не редактируем
@@ -114,14 +114,14 @@ export default function Reviews() {
                 rel="noopener noreferrer"
                 className="group flex flex-col bg-[#1f1f1f] p-8 transition-colors hover:bg-[#242424]"
               >
-                <MapPin size={32} className="text-[#bb9c69]" />
+                <MapPin size={32} className="text-[#45c1af]" />
                 <h3 className="font-display mt-5 text-2xl font-bold text-white">
                   {m.name}
                 </h3>
                 <p className="mt-3 flex-1 text-sm leading-relaxed text-white/60">
                   {m.description}
                 </p>
-                <span className="mt-6 inline-flex items-center gap-2 text-xs uppercase tracking-wider text-[#bb9c69] transition-colors group-hover:text-white">
+                <span className="mt-6 inline-flex items-center gap-2 text-xs uppercase tracking-wider text-[#45c1af] transition-colors group-hover:text-white">
                   {m.action} <ExternalLink size={14} />
                 </span>
               </a>
@@ -129,7 +129,7 @@ export default function Reviews() {
           </div>
 
           <div className="mx-auto mt-12 max-w-3xl border border-white/10 bg-[#1a1a1a] p-8 text-center">
-            <MessageCircleHeart size={30} className="mx-auto text-[#bb9c69]" />
+            <MessageCircleHeart size={30} className="mx-auto text-[#45c1af]" />
             <p className="mt-4 text-sm leading-relaxed text-white/70">
               Побывали у нас на празднике? Расскажите о впечатлениях на Яндекс
               Картах или в 2ГИС — ваш отзыв поможет другим гостям сделать выбор,
@@ -145,7 +145,7 @@ export default function Reviews() {
           <div>
             <h2 className="font-display text-3xl font-bold text-[#1f1f1f] sm:text-4xl">
               Станьте нашим следующим{" "}
-              <span className="text-[#bb9c69]">довольным гостем</span>
+              <span className="text-[#1f7567]">довольным гостем</span>
             </h2>
             <p className="mt-4 max-w-md text-sm leading-relaxed text-[#1f1f1f]/60">
               Оставьте заявку — подберём коттедж под ваш праздник и организуем

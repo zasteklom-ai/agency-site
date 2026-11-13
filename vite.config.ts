@@ -12,6 +12,11 @@ export default defineConfig({
     inspectAttr(), react()],
   server: {
     port: 3000,
+    watch: {
+      // Сиды в db/ (~1 МБ JSON) не участвуют в HMR, а их .bak-копии при
+      // кратковременной блокировке убивают вотчер: EBUSY → crash процесса.
+      ignored: ["**/db/**/*.json*"],
+    },
   },
   resolve: {
     alias: {

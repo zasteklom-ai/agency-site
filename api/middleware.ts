@@ -1,7 +1,15 @@
-import { initTRPC } from "@trpc/server";
+import { initTRPC, TRPCError } from "@trpc/server";
 import superjson from "superjson";
 import type { TrpcContext } from "./context";
 import { log } from "./lib/logger";
+
+const ADMIN_TOKEN = process.env.ADMIN_TOKEN || "goroda-mira-admin";
+
+function extractBearer(req: Request): string | null {
+  const header = req.headers.get("authorization");
+  if (!header?.startsWith("Bearer ")) return null;
+  return header.slice("Bearer ".length).trim();
+}
 
 const t = initTRPC.context<TrpcContext>().create({
   transformer: superjson,
@@ -28,3 +36,14 @@ const t = initTRPC.context<TrpcContext>().create({
 
 export const createRouter = t.router;
 export const publicQuery = t.procedure;
+
+// Новые админские процедуры идут через Bearer-токен (тот же ADMIN_TOKEN,
+// который админка после логина хранит в sessionStorage), а не через поле
+// token в каждом input. Существующие admin.* не трогаем — контракты intact.
+export const protectedProcedure = t.procedure.use(({ ctx, next }) => {
+  const token = extractBearer(ctx.req);
+  if (!token || token !== ADMIN_TOKEN) {
+    throw new TRPCError({ code: "UNAUTHORIZED", message: "Нет доступа" });
+  }
+  return next();
+});

@@ -10,6 +10,8 @@ import { env } from "./lib/env";
 import { log } from "./lib/logger";
 import { handleClientLog } from "./lib/clientlog";
 import { REQUEST_ID_HEADER, runWithRequestId } from "./lib/requestcontext";
+import { icalRoutes } from "./routes/ical";
+import { seoRoutes } from "./routes/seo";
 
 const app = new Hono<{ Bindings: HttpBindings }>();
 
@@ -76,6 +78,12 @@ app.post(
   bodyLimit({ maxSize: 64 * 1024, onError: (c) => c.body(null, 413) }),
   handleClientLog,
 );
+
+// iCal-экспорт для Авито/ЦИАН: plain HTTP GET, НЕ tRPC (краулеры не шлют JSON).
+app.route("/api/ical", icalRoutes);
+// Динамические sitemap.xml / robots.txt и генератор OG-картинок.
+app.route("/", seoRoutes);
+
 app.all("/api/*", (c) => c.json({ error: "Not Found" }, 404));
 
 // Unhandled request errors must reach /tmp/kimi-logs/app.log, not just stdout:
@@ -113,6 +121,26 @@ if (env.isProduction || invokedAsEntry) {
   const { serve } = await import("@hono/node-server");
   const { serveStaticFiles } = await import("./lib/vite");
   serveStaticFiles(app);
+
+  // iCal-импорт каждые 15 минут. Крутим в процессе Hono (self-hosted VPS,
+  // один процесс node dist/boot.js) — внешний cron не нужен. В dev-сервере
+  // vite не стартуем: там синхронизация — кнопкой «Синхронизировать сейчас».
+  const { schedule } = await import("node-cron");
+  const { syncAllCottages } = await import("./lib/ical-sync");
+  let syncing = false;
+  schedule("*/15 * * * *", () => {
+    if (syncing) return; // защита от перезахода, если прошлый цикл ещё идёт
+    syncing = true;
+    syncAllCottages()
+      .catch((e) =>
+        log.error("ical cron failed", {
+          error: e instanceof Error ? e.message : String(e),
+        }),
+      )
+      .finally(() => {
+        syncing = false;
+      });
+  });
 
   const port = parseInt(process.env.PORT || "3000");
   serve({ fetch: app.fetch, port }, () => {

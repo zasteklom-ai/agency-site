@@ -104,7 +104,7 @@ export default function Catalog() {
         <select
           value={filters.district}
           onChange={(e) => set("district", e.target.value)}
-          className="w-full border border-[#ddd5c3] bg-white px-3 py-2.5 text-sm outline-none focus:border-[#bb9c69]"
+          className="w-full border border-[#d8dcd9] bg-white px-3 py-2.5 text-sm outline-none focus:border-[#1f7567]"
         >
           <option value="">Все районы</option>
           {districts?.map((d) => (
@@ -136,7 +136,7 @@ export default function Catalog() {
                 type="checkbox"
                 checked={filters[key]}
                 onChange={(e) => set(key, e.target.checked)}
-                className="h-4 w-4 accent-[#bb9c69]"
+                className="h-4 w-4 accent-[#1f7567]"
               />
               {label}
             </label>
@@ -157,8 +157,8 @@ export default function Catalog() {
               }
               className={`border px-3.5 py-2 text-sm transition-colors ${
                 filters.minBedrooms === n
-                  ? "border-[#bb9c69] bg-[#bb9c69] text-white"
-                  : "border-[#ddd5c3] hover:border-[#bb9c69]"
+                  ? "border-[#1f7567] bg-[#1f7567] text-white"
+                  : "border-[#d8dcd9] hover:border-[#1f7567]"
               }`}
             >
               {n}+
@@ -178,8 +178,8 @@ export default function Catalog() {
               onClick={() => set("minBeds", filters.minBeds === n ? null : n)}
               className={`border px-3.5 py-2 text-sm transition-colors ${
                 filters.minBeds === n
-                  ? "border-[#bb9c69] bg-[#bb9c69] text-white"
-                  : "border-[#ddd5c3] hover:border-[#bb9c69]"
+                  ? "border-[#1f7567] bg-[#1f7567] text-white"
+                  : "border-[#d8dcd9] hover:border-[#1f7567]"
               }`}
             >
               {n}+
@@ -200,7 +200,7 @@ export default function Catalog() {
             set("minArea", e.target.value ? Number(e.target.value) : null)
           }
           placeholder="Например, 150"
-          className="w-full border border-[#ddd5c3] bg-white px-3 py-2.5 text-sm outline-none focus:border-[#bb9c69]"
+          className="w-full border border-[#d8dcd9] bg-white px-3 py-2.5 text-sm outline-none focus:border-[#1f7567]"
         />
       </div>
 
@@ -216,14 +216,14 @@ export default function Catalog() {
             set("maxPrice", e.target.value ? Number(e.target.value) : null)
           }
           placeholder="Например, 30000"
-          className="w-full border border-[#ddd5c3] bg-white px-3 py-2.5 text-sm outline-none focus:border-[#bb9c69]"
+          className="w-full border border-[#d8dcd9] bg-white px-3 py-2.5 text-sm outline-none focus:border-[#1f7567]"
         />
       </div>
 
       {activeCount > 0 && (
         <button
           onClick={reset}
-          className="flex items-center justify-center gap-2 border border-[#ddd5c3] py-2.5 text-xs uppercase tracking-wider text-[#1f1f1f]/60 transition-colors hover:border-[#bb9c69] hover:text-[#bb9c69]"
+          className="flex items-center justify-center gap-2 border border-[#d8dcd9] py-2.5 text-xs uppercase tracking-wider text-[#1f1f1f]/60 transition-colors hover:border-[#1f7567] hover:text-[#1f7567]"
         >
           <X size={14} /> Сбросить фильтры ({activeCount})
         </button>
@@ -236,7 +236,7 @@ export default function Catalog() {
       {/* Заголовок */}
       <div className="bg-[#141414] py-14">
         <div className="container-site">
-          <p className="text-xs uppercase tracking-[0.3em] text-[#bb9c69]">
+          <p className="text-xs uppercase tracking-[0.3em] text-[#1f7567]">
             {data ? `${data.total} объектов` : "Каталог"}
           </p>
           <h1 className="font-display mt-2 text-3xl font-bold text-white sm:text-4xl">
@@ -246,7 +246,7 @@ export default function Catalog() {
       </div>
 
       {/* Поиск + сортировка */}
-      <div className="sticky top-20 z-30 border-b border-[#e8e2d5] bg-[#f9f7f2]/95 py-4 backdrop-blur">
+      <div className="sticky top-20 z-30 border-b border-[#e8e2d5] bg-[#f2f6f4]/95 py-4 backdrop-blur">
         <div className="container-site flex flex-wrap items-center gap-3">
           <div className="relative min-w-[200px] flex-1">
             <Search
@@ -257,13 +257,13 @@ export default function Catalog() {
               value={filters.search}
               onChange={(e) => set("search", e.target.value)}
               placeholder="Поиск по названию или адресу"
-              className="w-full border border-[#ddd5c3] bg-white py-2.5 pl-9 pr-3 text-sm outline-none focus:border-[#bb9c69]"
+              className="w-full border border-[#d8dcd9] bg-white py-2.5 pl-9 pr-3 text-sm outline-none focus:border-[#1f7567]"
             />
           </div>
           <select
             value={filters.sort}
             onChange={(e) => set("sort", e.target.value as Filters["sort"])}
-            className="border border-[#ddd5c3] bg-white px-3 py-2.5 text-sm outline-none focus:border-[#bb9c69]"
+            className="border border-[#d8dcd9] bg-white px-3 py-2.5 text-sm outline-none focus:border-[#1f7567]"
           >
             <option value="newest">Сначала новые</option>
             <option value="price_asc">Цена: по возрастанию</option>
@@ -272,7 +272,7 @@ export default function Catalog() {
           </select>
           <button
             onClick={() => setMobileOpen(true)}
-            className="flex items-center gap-2 border border-[#bb9c69] px-4 py-2.5 text-sm text-[#bb9c69] lg:hidden"
+            className="flex items-center gap-2 border border-[#1f7567] px-4 py-2.5 text-sm text-[#1f7567] lg:hidden"
           >
             <SlidersHorizontal size={16} />
             Фильтры {activeCount > 0 && `(${activeCount})`}
@@ -318,8 +318,8 @@ export default function Catalog() {
                       }}
                       className={`h-10 w-10 text-sm transition-colors ${
                         page === i
-                          ? "bg-[#bb9c69] text-white"
-                          : "border border-[#ddd5c3] hover:border-[#bb9c69]"
+                          ? "bg-[#1f7567] text-white"
+                          : "border border-[#d8dcd9] hover:border-[#1f7567]"
                       }`}
                     >
                       {i + 1}
@@ -336,7 +336,7 @@ export default function Catalog() {
               <p className="mt-2 text-sm text-[#1f1f1f]/40">
                 Попробуйте изменить параметры фильтра
               </p>
-              <button onClick={reset} className="btn-outline-gold mt-6">
+              <button onClick={reset} className="btn-outline-brand mt-6">
                 Сбросить фильтры
               </button>
             </div>
@@ -351,7 +351,7 @@ export default function Catalog() {
             className="absolute inset-0 bg-black/50"
             onClick={() => setMobileOpen(false)}
           />
-          <div className="absolute bottom-0 left-0 right-0 top-0 overflow-y-auto bg-[#f9f7f2] p-6 pb-24">
+          <div className="absolute bottom-0 left-0 right-0 top-0 overflow-y-auto bg-[#f2f6f4] p-6 pb-24">
             <div className="mb-6 flex items-center justify-between">
               <h2 className="font-display text-xl font-bold">Фильтры</h2>
               <button
@@ -365,7 +365,7 @@ export default function Catalog() {
             {filterPanel}
             <button
               onClick={() => setMobileOpen(false)}
-              className="btn-gold fixed bottom-0 left-0 right-0 w-full"
+              className="btn-brand fixed bottom-0 left-0 right-0 w-full"
             >
               Показать {data?.total ?? ""} объектов
             </button>

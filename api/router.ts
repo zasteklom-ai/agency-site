@@ -1,6 +1,8 @@
 import { z } from "zod";
 import { eq, sql } from "drizzle-orm";
-import { createRouter, publicQuery } from "./middleware";
+import { randomUUID } from "node:crypto";
+import { TRPCError } from "@trpc/server";
+import { createRouter, publicQuery, protectedProcedure } from "./middleware";
 import {
   findCottages,
   findCottageById,
@@ -8,11 +10,39 @@ import {
   findDistricts,
   resolvePhotoUrls,
 } from "./queries/cottages";
+import {
+  cancelRange,
+  listBookingsByProperty,
+  upsertBooking,
+} from "./queries/bookings";
 import { getDb } from "./queries/connection";
 import { leads, cottages, cottagePhotos } from "@db/schema";
 import { storage } from "./lib/storage";
+import { clientIp, rateLimit } from "./lib/ratelimit";
+import { sendTelegramLead } from "./lib/telegram";
+import { resolveSiteUrl } from "./lib/env";
+import { syncCottageIcal } from "./lib/ical-sync";
+import { parseVkVideoUrl } from "@contracts/vk-video";
 
 const ADMIN_TOKEN = process.env.ADMIN_TOKEN || "goroda-mira-admin";
+
+const icalUrl = z
+  .string()
+  .trim()
+  .max(1024)
+  .refine((u) => u.startsWith("https://") || u.startsWith("http://"), {
+    message: "URL должен начинаться с http(s)://",
+  });
+
+// Ссылка на видео VK Видео: принимаем пустую или валидную ссылку на видео
+const vkVideoUrl = z
+  .string()
+  .trim()
+  .max(1024)
+  .refine((u) => u === "" || parseVkVideoUrl(u) !== null, {
+    message:
+      "Непонятная ссылка на видео. Пример: https://vkvideo.ru/video-123456_789",
+  });
 
 export const appRouter = createRouter({
   ping: publicQuery.query(() => ({ ok: true, ts: Date.now() })),
@@ -51,24 +81,194 @@ export const appRouter = createRouter({
   }),
 
   leads: createRouter({
+    // Rate-limit обязателен — иначе бота заблокируют за спам.
     create: publicQuery
       .input(
         z.object({
-          name: z.string().min(1),
-          phone: z.string().min(5),
+          name: z.string().trim().min(1, "Укажите имя").max(128),
+          phone: z.string().trim().min(5, "Укажите телефон").max(32),
           cottageId: z.number().optional(),
-          message: z.string().optional(),
+          checkIn: z.date().optional(),
+          checkOut: z.date().optional(),
+          guests: z.number().int().min(1).max(100).optional(),
+          message: z.string().trim().max(2000).optional(),
+          // Honeypot: люди не заполняют это поле (скрыто), боты заполняют.
+          website: z.string().optional(),
         }),
       )
-      .mutation(async ({ input }) => {
+      .mutation(async ({ input, ctx }) => {
+        // Притворяемся успехом, но ничего не сохраняем и никуда не шлём
+        if (input.website) return { ok: true };
+
+        const ip = clientIp(ctx.req);
+        const rl = rateLimit(`lead:${ip}`, 10, 10 * 60 * 1000);
+        if (!rl.allowed) {
+          throw new TRPCError({
+            code: "TOO_MANY_REQUESTS",
+            message: "Слишком много заявок. Попробуйте через несколько минут.",
+          });
+        }
+
+        if (input.checkIn && input.checkOut && input.checkOut <= input.checkIn) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Дата выезда должна быть позже даты заезда",
+          });
+        }
+
         const db = getDb();
+        let propertyTitle: string | null = null;
+        if (input.cottageId != null) {
+          const [c] = await db
+            .select({ title: cottages.title })
+            .from(cottages)
+            .where(eq(cottages.id, input.cottageId));
+          propertyTitle = c?.title ?? null;
+        }
+
         await db.insert(leads).values({
           name: input.name,
           phone: input.phone,
           cottageId: input.cottageId ?? null,
+          checkIn: input.checkIn ?? null,
+          checkOut: input.checkOut ?? null,
+          guests: input.guests ?? null,
           message: input.message ?? null,
         });
+
+        // Telegram — best effort: заявка уже в БД, сбой уведомления не должен
+        // выглядеть для клиента как сбой отправки формы
+        await sendTelegramLead({
+          propertyTitle,
+          propertyId: input.cottageId ?? null,
+          name: input.name,
+          phone: input.phone,
+          checkIn: input.checkIn ?? null,
+          checkOut: input.checkOut ?? null,
+          guests: input.guests ?? null,
+          message: input.message ?? null,
+        });
+
         return { ok: true };
+      }),
+  }),
+
+  // Календарь на карточке — только чтение, источник — tRPC + TanStack Query.
+  // В админке — полное редактирование через tRPC-мутации.
+  booking: createRouter({
+    listByProperty: publicQuery
+      .input(
+        z.object({
+          cottageId: z.number().int(),
+          from: z.date().optional(),
+          to: z.date().optional(),
+        }),
+      )
+      .query(({ input }) => {
+        const to = input.to ?? new Date(Date.now() + 365 * 24 * 3600 * 1000);
+        const from =
+          input.from ?? new Date(Date.now() - 90 * 24 * 3600 * 1000);
+        return listBookingsByProperty(input.cottageId, from, to);
+      }),
+
+    upsert: protectedProcedure
+      .input(
+        z.object({
+          cottageId: z.number().int(),
+          startDate: z.date(),
+          endDate: z.date(),
+          status: z.enum(["BOOKED", "BLOCKED", "AVAILABLE"]),
+          priceOverride: z.number().int().positive().nullable().optional(),
+          comment: z.string().trim().max(255).optional(),
+        }),
+      )
+      .mutation(({ input }) => upsertBooking(input)),
+
+    deleteRange: protectedProcedure
+      .input(
+        z.object({
+          cottageId: z.number().int(),
+          startDate: z.date(),
+          endDate: z.date(),
+        }),
+      )
+      .mutation(({ input }) => cancelRange(input)),
+  }),
+
+  ical: createRouter({
+    getSettings: protectedProcedure
+      .input(z.object({ cottageId: z.number().int() }))
+      .query(async ({ input, ctx }) => {
+        const db = getDb();
+        const [cottage] = await db
+          .select({
+            id: cottages.id,
+            title: cottages.title,
+            token: cottages.icalExportToken,
+            avito: cottages.icalImportAvitoUrl,
+            cian: cottages.icalImportCianUrl,
+          })
+          .from(cottages)
+          .where(eq(cottages.id, input.cottageId));
+        if (!cottage) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Объект не найден" });
+        }
+
+        // Токен генерируем лениво при первом открытии настроек
+        let token = cottage.token;
+        if (!token) {
+          token = randomUUID();
+          await db
+            .update(cottages)
+            .set({ icalExportToken: token })
+            .where(eq(cottages.id, cottage.id));
+        }
+
+        const site = resolveSiteUrl(ctx.req);
+        return {
+          exportUrl: `${site}/api/ical/export/${cottage.id}?token=${token}`,
+          importAvitoUrl: cottage.avito,
+          importCianUrl: cottage.cian,
+        };
+      }),
+
+    saveSettings: protectedProcedure
+      .input(
+        z.object({
+          cottageId: z.number().int(),
+          importAvitoUrl: icalUrl.nullable().optional(),
+          importCianUrl: icalUrl.nullable().optional(),
+          regenerateExportToken: z.boolean().optional(),
+        }),
+      )
+      .mutation(async ({ input }) => {
+        const db = getDb();
+        const set: Partial<typeof cottages.$inferInsert> = {};
+        if (input.importAvitoUrl !== undefined) {
+          set.icalImportAvitoUrl = input.importAvitoUrl || null;
+        }
+        if (input.importCianUrl !== undefined) {
+          set.icalImportCianUrl = input.importCianUrl || null;
+        }
+        if (input.regenerateExportToken) {
+          set.icalExportToken = randomUUID();
+        }
+        if (Object.keys(set).length === 0) return { ok: true };
+        await db.update(cottages).set(set).where(eq(cottages.id, input.cottageId));
+        return { ok: true };
+      }),
+
+    syncProperty: protectedProcedure
+      .input(z.object({ cottageId: z.number().int() }))
+      .mutation(async ({ input }) => {
+        const results = await syncCottageIcal(input.cottageId);
+        if (results.length === 0) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Для объекта не заданы URL импорта iCal",
+          });
+        }
+        return { results };
       }),
   }),
 
@@ -171,6 +371,7 @@ export const appRouter = createRouter({
           priceNewyear: z.number().nullable().optional(),
           deposit: z.number().nullable().optional(),
           amenities: z.array(z.string()),
+          videoUrl: vkVideoUrl.optional(),
           status: z.enum(["active", "hidden", "sold"]).optional(),
         }),
       )
@@ -205,6 +406,7 @@ export const appRouter = createRouter({
             hasPool: has("Бассейн крытый", "Бассейн уличный"),
             hasKupel: has("Купель горячая", "Купель холодная"),
             hasBilliard: has("Бильярд"),
+            videoUrl: input.videoUrl !== undefined ? input.videoUrl || null : undefined,
             status: input.status ?? "active",
           })
           .where(eq(cottages.id, input.id));
@@ -230,6 +432,7 @@ export const appRouter = createRouter({
           priceNewyear: z.number().nullable().optional(),
           deposit: z.number().nullable().optional(),
           amenities: z.array(z.string()),
+          videoUrl: vkVideoUrl.optional(),
           status: z.enum(["active", "hidden", "sold"]).optional(),
         }),
       )
@@ -262,6 +465,7 @@ export const appRouter = createRouter({
           hasPool: has("Бассейн крытый", "Бассейн уличный"),
           hasKupel: has("Купель горячая", "Купель холодная"),
           hasBilliard: has("Бильярд"),
+          videoUrl: input.videoUrl || null,
           status: input.status ?? "active",
         });
         return { ok: true, id: Number(result.insertId) };

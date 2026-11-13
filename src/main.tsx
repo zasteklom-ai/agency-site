@@ -2,6 +2,7 @@ import "@/lib/logger";
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router'
+import { HelmetProvider } from 'react-helmet-async'
 import './index.css'
 import { TRPCProvider } from "@/providers/trpc"
 import { initMetrika } from "@/lib/metrika"
@@ -12,9 +13,11 @@ initMetrika()
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
-      <TRPCProvider>
-        <App />
-      </TRPCProvider>
+      <HelmetProvider>
+        <TRPCProvider>
+          <App />
+        </TRPCProvider>
+      </HelmetProvider>
     </BrowserRouter>
   </StrictMode>,
 )

@@ -11,6 +11,7 @@ import Reviews from "./pages/Reviews";
 import About from "./pages/About";
 import Contacts from "./pages/Contacts";
 import Admin from "./pages/Admin";
+import AdminCottageCalendar from "./pages/AdminCottageCalendar";
 
 export default function App() {
   const location = useLocation();
@@ -34,6 +35,10 @@ export default function App() {
           <Route path="/about" element={<About />} />
           <Route path="/contacts" element={<Contacts />} />
           <Route path="/admin" element={<Admin />} />
+          <Route
+            path="/admin/cottages/:id/calendar"
+            element={<AdminCottageCalendar />}
+          />
         </Routes>
       </main>
       {!isAdmin && <Footer />}

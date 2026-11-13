@@ -16,8 +16,17 @@ export function Footer() {
     <footer className="section-dark">
       <div className="container-site grid gap-10 py-16 md:grid-cols-3">
         <div>
-          <div className="font-display text-2xl font-bold text-white">
-            Города <span className="text-[#bb9c69]">Мира</span>
+          <div className="flex items-center gap-3">
+            <span className="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden">
+              <img
+                src="/logo.png"
+                alt="Логотип Города Мира"
+                className="h-full w-full object-contain"
+              />
+            </span>
+            <div className="font-display text-2xl font-bold text-white">
+              Города <span className="text-[#45c1af]">Мира</span>
+            </div>
           </div>
           <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/60">
             Посуточная аренда коттеджей в Санкт-Петербурге и Ленинградской
@@ -25,32 +34,32 @@ export function Footer() {
           </p>
         </div>
         <div>
-          <h4 className="font-display text-lg text-[#bb9c69]">Навигация</h4>
+          <h4 className="font-display text-lg text-[#45c1af]">Навигация</h4>
           <nav className="mt-4 flex flex-col gap-2 text-sm text-white/70">
-            <Link to="/catalog" className="hover:text-[#bb9c69]">
+            <Link to="/catalog" className="hover:text-[#45c1af]">
               Каталог коттеджей
             </Link>
-            <Link to="/events" className="hover:text-[#bb9c69]">
+            <Link to="/events" className="hover:text-[#45c1af]">
               Мероприятия и банкеты
             </Link>
-            <Link to="/reviews" className="hover:text-[#bb9c69]">
+            <Link to="/reviews" className="hover:text-[#45c1af]">
               Отзывы
             </Link>
-            <Link to="/about" className="hover:text-[#bb9c69]">
+            <Link to="/about" className="hover:text-[#45c1af]">
               О нас
             </Link>
-            <Link to="/contacts" className="hover:text-[#bb9c69]">
+            <Link to="/contacts" className="hover:text-[#45c1af]">
               Контакты
             </Link>
           </nav>
         </div>
         <div>
-          <h4 className="font-display text-lg text-[#bb9c69]">Контакты</h4>
+          <h4 className="font-display text-lg text-[#45c1af]">Контакты</h4>
           <div className="mt-4 flex flex-col gap-3 text-sm text-white/70">
             <PhoneContact variant="footer" />
             <a
               href={`mailto:${CONTACTS.email}`}
-              className="flex items-center gap-2 hover:text-[#bb9c69]"
+              className="flex items-center gap-2 hover:text-[#45c1af]"
             >
               <Mail size={15} /> {CONTACTS.email}
             </a>
@@ -62,7 +71,7 @@ export function Footer() {
                 href={SOCIAL.vk}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 hover:text-[#bb9c69]"
+                className="flex items-center gap-2 hover:text-[#45c1af]"
               >
                 <VkIcon /> Сообщество ВКонтакте
               </a>
@@ -70,7 +79,7 @@ export function Footer() {
                 href={SOCIAL.telegramChannel}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 hover:text-[#bb9c69]"
+                className="flex items-center gap-2 hover:text-[#45c1af]"
               >
                 <Send size={15} /> Telegram-канал
               </a>
@@ -82,7 +91,7 @@ export function Footer() {
         © {new Date().getFullYear()} Города Мира. Посуточная аренда коттеджей.{" "}
         <Link
           to="/admin"
-          className="text-white/25 transition-colors hover:text-[#bb9c69]"
+          className="text-white/25 transition-colors hover:text-[#45c1af]"
         >
           Вход для администратора
         </Link>

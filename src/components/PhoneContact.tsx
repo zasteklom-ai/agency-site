@@ -73,7 +73,7 @@ export function PhoneContact({
   variant = "header",
   className = "",
 }: {
-  variant?: "header" | "footer" | "mobile";
+  variant?: "header" | "footer" | "mobile" | "card";
   className?: string;
 }) {
   const [open, setOpen] = useState(false);
@@ -91,29 +91,61 @@ export function PhoneContact({
 
   const textColor =
     variant === "footer"
-      ? "text-white/70"
+      ? "text-white/70 hover:text-[#45c1af]"
       : variant === "mobile"
-        ? "text-[#bb9c69]"
-        : "text-white";
+        ? "text-[#45c1af]"
+        : variant === "card"
+          ? "text-[#1f1f1f] hover:text-[#1f7567]"
+          : "text-white hover:text-[#45c1af]";
 
   return (
     <div ref={ref} className={`relative ${className}`}>
       <button
         onClick={() => setOpen(!open)}
-        className={`flex items-center gap-2 transition-colors hover:text-[#bb9c69] ${textColor}`}
+        className={`flex items-center transition-colors ${
+          variant === "header" || variant === "card"
+            ? "group gap-2.5"
+            : "gap-2"
+        } ${textColor}`}
         aria-expanded={open}
         aria-label="Связаться с нами"
       >
-        <Phone size={variant === "header" ? 16 : 15} />
-        <span
-          className={
-            variant === "header"
-              ? "text-sm font-semibold tracking-wide"
-              : "text-sm"
-          }
-        >
-          {CONTACTS.phoneDisplay}
-        </span>
+        {variant === "header" ? (
+          <>
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#45c1af]/40 text-[#45c1af] transition-all duration-300 group-hover:border-[#45c1af] group-hover:bg-[#45c1af] group-hover:text-[#141414]">
+              <Phone size={14} />
+            </span>
+            <span className="flex flex-col items-start leading-none">
+              <span className="mb-1 text-[9px] uppercase tracking-[0.24em] text-white/40 transition-colors duration-300 group-hover:text-[#45c1af]/80">
+                Позвоните нам
+              </span>
+              <span className="whitespace-nowrap text-[15px] font-bold tracking-wide">
+                {CONTACTS.phoneDisplay}
+              </span>
+            </span>
+          </>
+        ) : variant === "card" ? (
+          <>
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#1f7567]/40 text-[#1f7567] transition-all duration-300 group-hover:border-[#1f7567] group-hover:bg-[#1f7567] group-hover:text-white">
+              <Phone size={14} />
+            </span>
+            <span className="flex flex-col items-start leading-none">
+              <span className="mb-1 text-[9px] uppercase tracking-[0.24em] text-[#1f1f1f]/40 transition-colors duration-300 group-hover:text-[#1f7567]/80">
+                Позвоните нам
+              </span>
+              <span className="whitespace-nowrap text-[15px] font-bold tracking-wide">
+                {CONTACTS.phoneDisplay}
+              </span>
+            </span>
+          </>
+        ) : (
+          <>
+            <Phone size={15} />
+            <span className="whitespace-nowrap text-sm">
+              {CONTACTS.phoneDisplay}
+            </span>
+          </>
+        )}
       </button>
 
       {open && (
@@ -144,7 +176,7 @@ export function PhoneContact({
                   }}
                   className="group flex w-14 flex-col items-center gap-1.5"
                 >
-                  <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#f4f1ea] transition-all duration-200 group-hover:scale-110 group-hover:bg-[#bb9c69]/15 group-hover:shadow-md">
+                  <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#eef2f0] transition-all duration-200 group-hover:scale-110 group-hover:bg-[#1f7567]/15 group-hover:shadow-md">
                     {ch.icon}
                   </span>
                   <span className="text-[11px] font-medium text-black/60 group-hover:text-black">

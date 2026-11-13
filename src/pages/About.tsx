@@ -50,7 +50,7 @@ export default function About() {
     <div className="min-h-screen pt-20">
       <div className="bg-[#141414] py-20">
         <div className="container-site text-center">
-          <p className="text-xs uppercase tracking-[0.3em] text-[#bb9c69]">
+          <p className="text-xs uppercase tracking-[0.3em] text-[#45c1af]">
             О компании
           </p>
           <h1 className="font-display mx-auto mt-3 max-w-3xl text-3xl font-bold text-white sm:text-5xl">
@@ -64,7 +64,7 @@ export default function About() {
           <div>
             <h2 className="font-display text-3xl font-bold text-[#1f1f1f]">
               Мы знаем о загородной аренде{" "}
-              <span className="text-[#bb9c69]">всё</span>
+              <span className="text-[#1f7567]">всё</span>
             </h2>
             <div className="mt-6 space-y-4 text-sm leading-relaxed text-[#1f1f1f]/70">
               <p>
@@ -87,13 +87,13 @@ export default function About() {
               </p>
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-px bg-[#e8e2d5]">
+          <div className="grid grid-cols-2 gap-px bg-[#e3e7e4]">
             {STATS.map((s) => (
               <div
                 key={s.label}
                 className="flex flex-col items-center justify-center bg-white p-8 text-center"
               >
-                <span className="font-display text-4xl font-bold text-[#bb9c69]">
+                <span className="font-display text-4xl font-bold text-[#1f7567]">
                   {s.value}
                 </span>
                 <span className="mt-2 text-xs uppercase tracking-wider text-[#1f1f1f]/50">
@@ -108,12 +108,12 @@ export default function About() {
       <section className="section-dark py-20">
         <div className="container-site">
           <h2 className="font-display text-center text-3xl font-bold text-white sm:text-4xl">
-            Как мы <span className="text-[#bb9c69]">работаем</span>
+            Как мы <span className="text-[#45c1af]">работаем</span>
           </h2>
           <div className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {PRINCIPLES.map((p) => (
               <div key={p.title} className="bg-[#222] p-7">
-                <p.icon size={30} className="text-[#bb9c69]" />
+                <p.icon size={30} className="text-[#45c1af]" />
                 <h3 className="font-display mt-4 text-lg text-white">
                   {p.title}
                 </h3>
@@ -128,12 +128,12 @@ export default function About() {
 
       {/* Уровень сервиса и отзывы */}
       <section className="container-site py-20">
-        <div className="mx-auto max-w-4xl border border-[#e8e2d5] bg-white p-10 text-center sm:p-14">
-          <BadgeCheck size={36} className="mx-auto text-[#bb9c69]" />
+        <div className="mx-auto max-w-4xl border border-[#e3e7e4] bg-white p-10 text-center sm:p-14">
+          <BadgeCheck size={36} className="mx-auto text-[#1f7567]" />
           <h2 className="font-display mt-5 text-2xl font-bold text-[#1f1f1f] sm:text-3xl">
             Обладатели высшего уровня сервиса на{" "}
-            <span className="text-[#bb9c69]">ЦИАН</span> и{" "}
-            <span className="text-[#bb9c69]">Авито</span>
+            <span className="text-[#1f7567]">ЦИАН</span> и{" "}
+            <span className="text-[#1f7567]">Авито</span>
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-[#1f1f1f]/60">
             Крупнейшие площадки недвижимости присвоили агентству максимальные
@@ -141,14 +141,14 @@ export default function About() {
             независимых площадках — Яндекс Картах и 2ГИС.
           </p>
           <div className="mt-8 flex flex-wrap justify-center gap-4">
-            <Link to="/reviews" className="btn-gold">
+            <Link to="/reviews" className="btn-brand">
               <Star size={16} className="mr-2 inline" /> Отзывы о нас
             </Link>
             <a
               href={REVIEW_LINKS.yandexMaps}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-outline-gold"
+              className="btn-outline-brand"
             >
               Яндекс Карты
             </a>
@@ -156,7 +156,7 @@ export default function About() {
               href={REVIEW_LINKS.gis2}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-outline-gold"
+              className="btn-outline-brand"
             >
               2ГИС
             </a>
@@ -168,11 +168,11 @@ export default function About() {
       <section className="section-dark py-20">
         <div className="container-site">
           <div className="text-center">
-            <p className="text-xs uppercase tracking-[0.3em] text-[#bb9c69]">
+            <p className="text-xs uppercase tracking-[0.3em] text-[#45c1af]">
               Мы на связи
             </p>
             <h2 className="font-display mt-3 text-3xl font-bold text-white sm:text-4xl">
-              Наши <span className="text-[#bb9c69]">сообщества</span>
+              Наши <span className="text-[#45c1af]">сообщества</span>
             </h2>
             <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-white/60">
               Новые дома, свободные даты, акции и живые фото с праздников —
@@ -225,10 +225,10 @@ export default function About() {
           Готовы выбрать дом для праздника?
         </h2>
         <div className="mt-8 flex flex-wrap justify-center gap-4">
-          <Link to="/catalog" className="btn-gold">
+          <Link to="/catalog" className="btn-brand">
             Смотреть каталог
           </Link>
-          <Link to="/contacts" className="btn-outline-gold">
+          <Link to="/contacts" className="btn-outline-brand">
             Связаться с нами
           </Link>
         </div>

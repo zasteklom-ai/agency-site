@@ -6,25 +6,25 @@
 
 @layer base {
   :root {
-    --background: 40 23% 97%;
-    --foreground: 0 0% 12%;
+    --background: 160 14% 97%;
+    --foreground: 0 0% 13%;
     --card: 0 0% 100%;
-    --card-foreground: 0 0% 12%;
+    --card-foreground: 0 0% 13%;
     --popover: 0 0% 100%;
-    --popover-foreground: 0 0% 12%;
-    --primary: 37 39% 57%;
+    --popover-foreground: 0 0% 13%;
+    --primary: 170 58% 29%;
     --primary-foreground: 0 0% 100%;
-    --secondary: 40 20% 93%;
-    --secondary-foreground: 0 0% 12%;
-    --muted: 40 15% 92%;
+    --secondary: 160 12% 93%;
+    --secondary-foreground: 170 30% 18%;
+    --muted: 150 10% 94%;
     --muted-foreground: 0 0% 42%;
-    --accent: 37 39% 57%;
+    --accent: 170 58% 29%;
     --accent-foreground: 0 0% 100%;
     --destructive: 0 70% 45%;
     --destructive-foreground: 0 0% 98%;
-    --border: 37 20% 85%;
-    --input: 37 20% 82%;
-    --ring: 37 39% 57%;
+    --border: 150 8% 85%;
+    --input: 150 8% 82%;
+    --ring: 170 58% 29%;
     --radius: 0.5rem;
   }
 
@@ -46,26 +46,28 @@
   }
 
   ::selection {
-    background: hsl(37 39% 57% / 0.3);
+    background: hsl(170 58% 29% / 0.25);
   }
 }
 
 @layer components {
-  .gold-text {
-    @apply text-[#bb9c69];
+  /* Брендовая палитра из логотипа:
+     изумруд #1f7567 (текст/заливки на светлом), мята #45c1af (акценты на тёмном) */
+  .brand-text {
+    @apply text-[#1f7567];
   }
 
   .section-dark {
     background: #1a1a1a;
-    color: #f5f2ec;
+    color: #f2f5f4;
   }
 
-  .btn-gold {
-    @apply inline-flex items-center justify-center gap-2 bg-[#bb9c69] px-8 py-4 text-sm font-semibold uppercase tracking-[0.15em] text-white transition-all duration-300 hover:bg-[#a9874d] hover:shadow-lg;
+  .btn-brand {
+    @apply inline-flex items-center justify-center gap-2 bg-[#1f7567] px-8 py-4 text-sm font-semibold uppercase tracking-[0.15em] text-white transition-all duration-300 hover:bg-[#185f54] hover:shadow-lg;
   }
 
-  .btn-outline-gold {
-    @apply inline-flex items-center justify-center gap-2 border border-[#bb9c69] bg-transparent px-8 py-4 text-sm font-semibold uppercase tracking-[0.15em] text-[#bb9c69] transition-all duration-300 hover:bg-[#bb9c69] hover:text-white;
+  .btn-outline-brand {
+    @apply inline-flex items-center justify-center gap-2 border border-[#1f7567] bg-transparent px-8 py-4 text-sm font-semibold uppercase tracking-[0.15em] text-[#1f7567] transition-all duration-300 hover:bg-[#1f7567] hover:text-white;
   }
 
   .container-site {

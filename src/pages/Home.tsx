@@ -88,22 +88,22 @@ export default function Home() {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#141414] via-[#141414]/40 to-[#141414]/20" />
         <div className="container-site relative pb-20 pt-40">
-          <p className="mb-4 text-xs uppercase tracking-[0.35em] text-[#bb9c69]">
+          <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white">
             Санкт-Петербург и Ленинградская область
           </p>
           <h1 className="font-display max-w-3xl text-4xl font-bold leading-tight text-white sm:text-5xl lg:text-6xl">
             Коттеджи посуточно для ваших{" "}
-            <span className="text-[#bb9c69]">праздников</span>
+            <span className="text-[#45c1af]">праздников</span>
           </h1>
           <p className="mt-6 max-w-xl text-base leading-relaxed text-white/70 sm:text-lg">
             Свадьбы, юбилеи, корпоративы и отдых с близкими — {stats?.total ?? 290}{" "}
             проверенных домов с банями, бассейнами и купелями.
           </p>
           <div className="mt-10 flex flex-wrap gap-4">
-            <Link to="/catalog" className="btn-gold">
+            <Link to="/catalog" className="btn-brand">
               Смотреть каталог
             </Link>
-            <a href="#lead" className="btn-outline-gold !text-white !border-white/40 hover:!border-[#bb9c69]">
+            <a href="#lead" className="btn-outline-brand !text-white !border-white/40 hover:!border-[#45c1af]">
               Подобрать дом
             </a>
           </div>
@@ -111,7 +111,7 @@ export default function Home() {
       </section>
 
       {/* Преимущества-фильтры быстрые */}
-      <section className="border-b border-[#e8e2d5] bg-white py-8">
+      <section className="border-b border-[#e3e7e4] bg-white py-8">
         <div className="container-site flex flex-wrap items-center justify-center gap-x-10 gap-y-4">
           {[
             { icon: Flame, label: "С баней", q: "?banya=1" },
@@ -122,9 +122,9 @@ export default function Home() {
             <Link
               key={f.label}
               to={`/catalog${f.q}`}
-              className="flex items-center gap-3 text-sm uppercase tracking-wider text-[#1f1f1f]/70 transition-colors hover:text-[#bb9c69]"
+              className="flex items-center gap-3 text-sm uppercase tracking-wider text-[#1f1f1f]/70 transition-colors hover:text-[#1f7567]"
             >
-              <f.icon size={20} className="text-[#bb9c69]" />
+              <f.icon size={20} className="text-[#1f7567]" />
               {f.label}
             </Link>
           ))}
@@ -136,7 +136,7 @@ export default function Home() {
         <div className="container-site">
           <div className="mb-12 flex flex-wrap items-end justify-between gap-6">
             <div>
-              <p className="text-xs uppercase tracking-[0.3em] text-[#bb9c69]">
+              <p className="text-xs uppercase tracking-[0.3em] text-[#1f7567]">
                 Избранное
               </p>
               <h2 className="font-display mt-3 text-3xl font-bold text-[#1f1f1f] sm:text-4xl">
@@ -145,7 +145,7 @@ export default function Home() {
             </div>
             <Link
               to="/catalog"
-              className="flex items-center gap-2 text-sm uppercase tracking-wider text-[#bb9c69] transition-colors hover:text-[#a9874d]"
+              className="flex items-center gap-2 text-sm uppercase tracking-wider text-[#1f7567] transition-colors hover:text-[#185f54]"
             >
               Весь каталог <ArrowRight size={16} />
             </Link>
@@ -161,7 +161,7 @@ export default function Home() {
       {/* Мероприятия */}
       <section className="section-dark py-24">
         <div className="container-site">
-          <p className="text-center text-xs uppercase tracking-[0.3em] text-[#bb9c69]">
+          <p className="text-center text-xs uppercase tracking-[0.3em] text-[#45c1af]">
             Для любого события
           </p>
           <h2 className="font-display mx-auto mt-3 max-w-2xl text-center text-3xl font-bold sm:text-4xl">
@@ -175,7 +175,7 @@ export default function Home() {
               >
                 <e.icon
                   size={32}
-                  className="text-[#bb9c69] transition-transform group-hover:scale-110"
+                  className="text-[#45c1af] transition-transform group-hover:scale-110"
                 />
                 <h3 className="font-display mt-5 text-xl text-white">
                   {e.title}
@@ -195,10 +195,10 @@ export default function Home() {
           <div className="grid gap-12 lg:grid-cols-3">
             {ADVANTAGES.map((a, i) => (
               <div key={a.title} className="relative">
-                <span className="font-display absolute -top-6 right-0 text-7xl font-bold text-[#bb9c69]/10">
+                <span className="font-display absolute -top-6 right-0 text-7xl font-bold text-[#1f7567]/10">
                   {String(i + 1).padStart(2, "0")}
                 </span>
-                <a.icon size={36} className="text-[#bb9c69]" />
+                <a.icon size={36} className="text-[#1f7567]" />
                 <h3 className="font-display mt-5 text-2xl text-[#1f1f1f]">
                   {a.title}
                 </h3>
@@ -216,12 +216,12 @@ export default function Home() {
         <div className="absolute inset-0 bg-[#141414]" />
         <div className="container-site relative grid items-center gap-12 lg:grid-cols-2">
           <div className="text-white">
-            <p className="text-xs uppercase tracking-[0.3em] text-[#bb9c69]">
+            <p className="text-xs uppercase tracking-[0.3em] text-[#45c1af]">
               Бесплатный подбор
             </p>
             <h2 className="font-display mt-3 text-3xl font-bold sm:text-4xl">
               Расскажите, какой дом вы ищете —{" "}
-              <span className="text-[#bb9c69]">найдём за 15 минут</span>
+              <span className="text-[#45c1af]">найдём за 15 минут</span>
             </h2>
             <p className="mt-5 max-w-md text-sm leading-relaxed text-white/60">
               Оставьте заявку, и наш менеджер подберёт свободные коттеджи под
@@ -229,7 +229,7 @@ export default function Home() {
               условиях, организуем просмотр.
             </p>
             <div className="mt-8 flex items-center gap-3 text-white/70">
-              <MapPin size={18} className="text-[#bb9c69]" />
+              <MapPin size={18} className="text-[#45c1af]" />
               <span className="text-sm">
                 Работаем по всей Ленинградской области
               </span>
@@ -239,7 +239,7 @@ export default function Home() {
                 href={SOCIAL.vk}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 border border-white/20 px-4 py-2.5 text-xs uppercase tracking-wider text-white/80 transition-colors hover:border-[#bb9c69] hover:text-[#bb9c69]"
+                className="flex items-center gap-2 border border-white/20 px-4 py-2.5 text-xs uppercase tracking-wider text-white/80 transition-colors hover:border-[#45c1af] hover:text-[#45c1af]"
               >
                 <VkIcon size={16} /> Мы ВКонтакте
               </a>
@@ -247,7 +247,7 @@ export default function Home() {
                 href={SOCIAL.telegramChannel}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 border border-white/20 px-4 py-2.5 text-xs uppercase tracking-wider text-white/80 transition-colors hover:border-[#bb9c69] hover:text-[#bb9c69]"
+                className="flex items-center gap-2 border border-white/20 px-4 py-2.5 text-xs uppercase tracking-wider text-white/80 transition-colors hover:border-[#45c1af] hover:text-[#45c1af]"
               >
                 <Send size={14} /> Telegram-канал
               </a>

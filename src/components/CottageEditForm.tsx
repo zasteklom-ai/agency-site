@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { trpc } from "@/providers/trpc";
-import { X, ImagePlus, Trash2, ChevronUp } from "lucide-react";
+import { X, ImagePlus, Trash2, ChevronUp, Clapperboard } from "lucide-react";
+import { parseVkVideoUrl } from "@contracts/vk-video";
 
 export const AMENITY_OPTIONS = [
   "Баня",
@@ -33,6 +34,7 @@ interface CottageEditData {
   priceNewyear: number | null;
   deposit: number | null;
   amenities: string | null;
+  videoUrl: string | null;
   status: string;
 }
 
@@ -51,6 +53,7 @@ const EMPTY_FORM = {
   priceWeekend: "",
   priceNewyear: "",
   deposit: "",
+  videoUrl: "",
   status: "active",
 };
 
@@ -83,6 +86,7 @@ export function CottageEditForm({
           priceWeekend: cottage.priceWeekend?.toString() ?? "",
           priceNewyear: cottage.priceNewyear?.toString() ?? "",
           deposit: cottage.deposit?.toString() ?? "",
+          videoUrl: cottage.videoUrl ?? "",
           status: cottage.status,
         }
       : EMPTY_FORM,
@@ -94,6 +98,11 @@ export function CottageEditForm({
   );
   const [saved, setSaved] = useState(false);
   const [uploading, setUploading] = useState(0);
+  // Фото, выбранные ДО создания объекта: грузим сразу после createCottage
+  const [queuedFiles, setQueuedFiles] = useState<{ file: File; url: string }[]>(
+    [],
+  );
+  const [videoError, setVideoError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const utils = trpc.useUtils();
@@ -114,9 +123,27 @@ export function CottageEditForm({
   });
 
   const createMutation = trpc.admin.createCottage.useMutation({
-    onSuccess: (res) => {
+    onSuccess: async (res) => {
       invalidateAll();
       setSaved(true);
+      // Сначала выгружаем очередь фото на созданный объект,
+      // потом открываем его же в режиме редактирования
+      const files = queuedFiles;
+      if (files.length > 0) {
+        setUploading(files.length);
+        for (const { file } of files) {
+          const base64 = await fileToBase64(file);
+          await uploadMutation.mutateAsync({
+            token,
+            cottageId: res.id,
+            name: file.name,
+            contentBase64: base64,
+            contentType: file.type,
+          });
+          setUploading((n) => n - 1);
+        }
+        await utils.cottages.byId.invalidate({ id: res.id });
+      }
       setTimeout(() => {
         onClose();
         onCreated?.(res.id);
@@ -147,17 +174,32 @@ export function CottageEditForm({
     },
   });
 
+  function fileToBase64(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve((reader.result as string).split(",")[1]);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
   const handleFiles = async (files: FileList | null) => {
-    if (!files || !cottage) return;
+    if (!files) return;
+    if (isNew || !cottage) {
+      // Создание: копим файлы в очередь, выгрузка — сразу после сохранения
+      setQueuedFiles((q) => [
+        ...q,
+        ...Array.from(files).map((file) => ({
+          file,
+          url: URL.createObjectURL(file),
+        })),
+      ]);
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      return;
+    }
     setUploading(files.length);
     for (const file of Array.from(files)) {
-      const base64 = await new Promise<string>((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () =>
-          resolve((reader.result as string).split(",")[1]);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
+      const base64 = await fileToBase64(file);
       await uploadMutation.mutateAsync({
         token,
         cottageId: cottage.id,
@@ -188,6 +230,14 @@ export function CottageEditForm({
 
   const submit = (e: React.FormEvent) => {
     e.preventDefault();
+    const video = form.videoUrl.trim();
+    if (video && !parseVkVideoUrl(video)) {
+      setVideoError(
+        "Не получилось разобрать ссылку. Пример: https://vkvideo.ru/video-123456_789",
+      );
+      return;
+    }
+    setVideoError(null);
     const payload = {
       token,
       title: form.title,
@@ -205,6 +255,7 @@ export function CottageEditForm({
       priceNewyear: num(form.priceNewyear),
       deposit: num(form.deposit),
       amenities,
+      videoUrl: video,
       status: form.status as "active" | "hidden" | "sold",
     };
     if (isNew) {
@@ -230,7 +281,7 @@ export function CottageEditForm({
           onChange={set(key)}
           placeholder={opts.placeholder}
           min={opts.type === "number" ? 0 : undefined}
-          className="w-full border border-[#ddd5c3] bg-white px-3 py-2.5 pr-10 text-sm outline-none focus:border-[#bb9c69]"
+          className="w-full border border-[#d8dcd9] bg-white px-3 py-2.5 pr-10 text-sm outline-none focus:border-[#1f7567]"
         />
         {opts.suffix && (
           <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-[#1f1f1f]/40">
@@ -249,18 +300,18 @@ export function CottageEditForm({
       <form
         onSubmit={submit}
         onClick={(e) => e.stopPropagation()}
-        className="mx-auto my-8 w-full max-w-3xl bg-[#f9f7f2] shadow-2xl"
+        className="mx-auto my-8 w-full max-w-3xl bg-[#f2f6f4] shadow-2xl"
       >
         {/* Шапка */}
-        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-[#e8e2d5] bg-[#141414] px-6 py-4">
+        <div className="sticky top-0 z-10 flex items-center justify-between border-b border-[#e3e7e4] bg-[#141414] px-6 py-4">
           <h2 className="font-display text-xl font-bold text-white">
             {isNew ? (
               <>
-                Новый <span className="text-[#bb9c69]">объект</span>
+                Новый <span className="text-[#1f7567]">объект</span>
               </>
             ) : (
               <>
-                Редактирование <span className="text-[#bb9c69]">объекта</span>
+                Редактирование <span className="text-[#1f7567]">объекта</span>
               </>
             )}
           </h2>
@@ -289,7 +340,7 @@ export function CottageEditForm({
                   required
                   value={form.title}
                   onChange={set("title")}
-                  className="w-full border border-[#ddd5c3] bg-white px-3 py-2.5 text-sm outline-none focus:border-[#bb9c69]"
+                  className="w-full border border-[#d8dcd9] bg-white px-3 py-2.5 text-sm outline-none focus:border-[#1f7567]"
                 />
               </label>
               <div className="grid gap-4 sm:grid-cols-2">
@@ -300,7 +351,7 @@ export function CottageEditForm({
                   <input
                     value={form.address}
                     onChange={set("address")}
-                    className="w-full border border-[#ddd5c3] bg-white px-3 py-2.5 text-sm outline-none focus:border-[#bb9c69]"
+                    className="w-full border border-[#d8dcd9] bg-white px-3 py-2.5 text-sm outline-none focus:border-[#1f7567]"
                   />
                 </label>
                 <label className="block">
@@ -310,7 +361,7 @@ export function CottageEditForm({
                   <input
                     value={form.district}
                     onChange={set("district")}
-                    className="w-full border border-[#ddd5c3] bg-white px-3 py-2.5 text-sm outline-none focus:border-[#bb9c69]"
+                    className="w-full border border-[#d8dcd9] bg-white px-3 py-2.5 text-sm outline-none focus:border-[#1f7567]"
                   />
                 </label>
                 <label className="block">
@@ -320,7 +371,7 @@ export function CottageEditForm({
                   <select
                     value={form.status}
                     onChange={set("status")}
-                    className="w-full border border-[#ddd5c3] bg-white px-3 py-2.5 text-sm outline-none focus:border-[#bb9c69]"
+                    className="w-full border border-[#d8dcd9] bg-white px-3 py-2.5 text-sm outline-none focus:border-[#1f7567]"
                   >
                     <option value="active">Активен</option>
                     <option value="hidden">Скрыт</option>
@@ -328,6 +379,34 @@ export function CottageEditForm({
                   </select>
                 </label>
               </div>
+              <label className="mt-4 block">
+                <span className="mb-1.5 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-[#1f1f1f]/50">
+                  <Clapperboard size={13} />
+                  Видеообзор (VK Видео)
+                </span>
+                <input
+                  value={form.videoUrl}
+                  onChange={(e) => {
+                    setForm((f) => ({ ...f, videoUrl: e.target.value }));
+                    setVideoError(null);
+                  }}
+                  placeholder="https://vkvideo.ru/video-123456_789"
+                  className={`w-full border bg-white px-3 py-2.5 text-sm outline-none ${
+                    videoError
+                      ? "border-red-400 focus:border-red-500"
+                      : "border-[#d8dcd9] focus:border-[#1f7567]"
+                  }`}
+                />
+                <span className="mt-1 block text-xs text-[#1f1f1f]/40">
+                  Ссылка на ролик с vkvideo.ru или vk.com — плеер встроится в
+                  галерею объекта сразу после первого фото.
+                </span>
+                {videoError && (
+                  <span className="mt-1 block text-xs text-red-500">
+                    {videoError}
+                  </span>
+                )}
+              </label>
             </div>
           </section>
 
@@ -370,10 +449,66 @@ export function CottageEditForm({
               Фотографии
             </h3>
             {isNew ? (
-              <p className="border border-dashed border-[#ddd5c3] bg-white p-6 text-center text-sm text-[#1f1f1f]/50">
-                Сначала сохраните объект — после этого здесь можно будет
-                загрузить фотографии
-              </p>
+              <>
+                <p className="mb-4 text-xs text-[#1f1f1f]/50">
+                  Первое фото станет обложкой. Выбранные фотографии загрузятся
+                  автоматически сразу после сохранения объекта. Максимум 10 МБ
+                  на файл.
+                </p>
+                <div className="grid grid-cols-3 gap-3 sm:grid-cols-4">
+                  {queuedFiles.map((q, i) => (
+                    <div
+                      key={`${q.file.name}-${i}`}
+                      className="group relative aspect-[4/3] overflow-hidden bg-[#e8e2d5]"
+                    >
+                      <img
+                        src={q.url}
+                        alt=""
+                        className="h-full w-full object-cover"
+                      />
+                      <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/60 opacity-0 transition-opacity group-hover:opacity-100">
+                        <button
+                          type="button"
+                          title="Убрать из загрузки"
+                          onClick={() =>
+                            setQueuedFiles((list) =>
+                              list.filter((_, idx) => idx !== i),
+                            )
+                          }
+                          className="flex h-9 w-9 items-center justify-center rounded-full bg-white/20 text-white transition-colors hover:bg-red-500"
+                        >
+                          <Trash2 size={18} />
+                        </button>
+                      </div>
+                      {i === 0 && (
+                        <span className="absolute left-1.5 top-1.5 bg-[#1f7567] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white">
+                          Обложка
+                        </span>
+                      )}
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    className="flex aspect-[4/3] flex-col items-center justify-center gap-2 border-2 border-dashed border-[#1f7567]/50 text-[#1f7567] transition-colors hover:border-[#1f7567] hover:bg-[#1f7567]/5"
+                  >
+                    <ImagePlus size={24} />
+                    <span className="text-xs font-medium">
+                      {queuedFiles.length > 0
+                        ? `В очереди: ${queuedFiles.length}`
+                        : "Добавить фото"}
+                    </span>
+                  </button>
+                </div>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  multiple
+                  className="hidden"
+                  onChange={(e) => handleFiles(e.target.files)}
+                />
+              </>
             ) : (
               <>
                 <p className="mb-4 text-xs text-[#1f1f1f]/50">
@@ -404,7 +539,7 @@ export function CottageEditForm({
                               orderedIds: [p.id, ...rest],
                             });
                           }}
-                          className="flex h-9 w-9 items-center justify-center rounded-full bg-white/20 text-white transition-colors hover:bg-[#bb9c69]"
+                          className="flex h-9 w-9 items-center justify-center rounded-full bg-white/20 text-white transition-colors hover:bg-[#1f7567]"
                         >
                           <ChevronUp size={18} />
                         </button>
@@ -425,7 +560,7 @@ export function CottageEditForm({
                         </button>
                       </div>
                       {photos[0]?.id === p.id && (
-                        <span className="absolute left-1.5 top-1.5 bg-[#bb9c69] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white">
+                        <span className="absolute left-1.5 top-1.5 bg-[#1f7567] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-white">
                           Обложка
                         </span>
                       )}
@@ -436,7 +571,7 @@ export function CottageEditForm({
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
                     disabled={uploading > 0}
-                    className="flex aspect-[4/3] flex-col items-center justify-center gap-2 border-2 border-dashed border-[#bb9c69]/50 text-[#bb9c69] transition-colors hover:border-[#bb9c69] hover:bg-[#bb9c69]/5 disabled:opacity-50"
+                    className="flex aspect-[4/3] flex-col items-center justify-center gap-2 border-2 border-dashed border-[#1f7567]/50 text-[#1f7567] transition-colors hover:border-[#1f7567] hover:bg-[#1f7567]/5 disabled:opacity-50"
                   >
                     <ImagePlus size={24} />
                     <span className="text-xs font-medium">
@@ -476,8 +611,8 @@ export function CottageEditForm({
                     onClick={() => toggleAmenity(a)}
                     className={`border px-3 py-2.5 text-left text-sm transition-colors ${
                       active
-                        ? "border-[#bb9c69] bg-[#bb9c69] text-white"
-                        : "border-[#ddd5c3] bg-white text-[#1f1f1f]/70 hover:border-[#bb9c69]"
+                        ? "border-[#1f7567] bg-[#1f7567] text-white"
+                        : "border-[#d8dcd9] bg-white text-[#1f1f1f]/70 hover:border-[#1f7567]"
                     }`}
                   >
                     {a}
@@ -496,14 +631,14 @@ export function CottageEditForm({
               value={form.description}
               onChange={set("description")}
               rows={10}
-              className="w-full border border-[#ddd5c3] bg-white px-3 py-2.5 text-sm leading-relaxed outline-none focus:border-[#bb9c69]"
+              className="w-full border border-[#d8dcd9] bg-white px-3 py-2.5 text-sm leading-relaxed outline-none focus:border-[#1f7567]"
               placeholder="Подробное описание дома, условий и особенностей"
             />
           </section>
         </div>
 
         {/* Подвал */}
-        <div className="sticky bottom-0 flex items-center justify-end gap-3 border-t border-[#e8e2d5] bg-white px-6 py-4">
+        <div className="sticky bottom-0 flex items-center justify-end gap-3 border-t border-[#e3e7e4] bg-white px-6 py-4">
           {mutation.isError && (
             <span className="mr-auto text-sm text-red-500">
               Ошибка сохранения, попробуйте ещё раз
@@ -517,14 +652,14 @@ export function CottageEditForm({
           <button
             type="button"
             onClick={onClose}
-            className="border border-[#ddd5c3] px-6 py-3 text-sm text-[#1f1f1f]/60 transition-colors hover:border-[#bb9c69]"
+            className="border border-[#d8dcd9] px-6 py-3 text-sm text-[#1f1f1f]/60 transition-colors hover:border-[#1f7567]"
           >
             Отмена
           </button>
           <button
             type="submit"
             disabled={mutation.isPending}
-            className="btn-gold !px-8 !py-3 disabled:opacity-50"
+            className="btn-brand !px-8 !py-3 disabled:opacity-50"
           >
             {mutation.isPending ? "Сохранение..." : "Сохранить"}
           </button>

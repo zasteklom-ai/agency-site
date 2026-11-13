@@ -12,7 +12,7 @@ export default function Contacts() {
     <div className="min-h-screen pt-20">
       <div className="bg-[#141414] py-20">
         <div className="container-site text-center">
-          <p className="text-xs uppercase tracking-[0.3em] text-[#bb9c69]">
+          <p className="text-xs uppercase tracking-[0.3em] text-[#45c1af]">
             Контакты
           </p>
           <h1 className="font-display mt-3 text-3xl font-bold text-white sm:text-5xl">
@@ -35,7 +35,7 @@ export default function Contacts() {
                 content: (
                   <PhoneContact
                     variant="footer"
-                    className="text-lg font-semibold text-[#bb9c69] [&_span]:!text-lg [&_button]:!text-[#bb9c69] hover:[&_button]:!text-[#a9874d]"
+                    className="text-lg font-semibold text-[#1f7567] [&_span]:!text-lg [&_button]:!text-[#1f7567] hover:[&_button]:!text-[#185f54]"
                   />
                 ),
               },
@@ -45,7 +45,7 @@ export default function Contacts() {
                 content: (
                   <a
                     href="mailto:info@goroda-mira.ru"
-                    className="text-lg font-semibold text-[#bb9c69] hover:text-[#a9874d]"
+                    className="text-lg font-semibold text-[#1f7567] hover:text-[#185f54]"
                   >
                     info@goroda-mira.ru
                   </a>
@@ -73,8 +73,8 @@ export default function Contacts() {
               },
             ].map((item) => (
               <div key={item.title} className="flex gap-5">
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center bg-[#bb9c69]/10">
-                  <item.icon size={20} className="text-[#bb9c69]" />
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center bg-[#1f7567]/10">
+                  <item.icon size={20} className="text-[#1f7567]" />
                 </div>
                 <div>
                   <h3 className="text-xs font-semibold uppercase tracking-wider text-[#1f1f1f]/50">
@@ -87,7 +87,7 @@ export default function Contacts() {
           </div>
         </div>
 
-        <div className="border border-[#e8e2d5] bg-white p-8 sm:p-10">
+        <div className="border border-[#e3e7e4] bg-white p-8 sm:p-10">
           <h2 className="font-display text-2xl font-bold text-[#1f1f1f]">
             Оставить заявку
           </h2>

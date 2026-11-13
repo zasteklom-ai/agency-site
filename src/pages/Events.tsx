@@ -9,9 +9,6 @@ import {
   PartyPopper,
   Flower2,
   Music,
-  UtensilsCrossed,
-  Salad,
-  Flame,
   Check,
 } from "lucide-react";
 
@@ -76,7 +73,12 @@ const MENU_VARIANTS: MenuVariant[] = [
     sections: [
       {
         title: "Холодные закуски",
-        images: ["/banquet/meat-plate.jpg", "/banquet/fish.jpg", "/banquet/cheese.jpg"],
+        images: [
+          "/banquet/meat-plate.jpg",
+          "/banquet/fish.jpg",
+          "/banquet/cheese.jpg",
+          "/banquet/bruschetta.jpg",
+        ],
         items: [
           "Мясные деликатесы (карбонад, ласунак, рулет из птицы, зелень, хрен)",
           "Рыбное ассорти (форель с/с, горбуша х/к, зубатка х/к, укроп, маслины)",
@@ -88,6 +90,7 @@ const MENU_VARIANTS: MenuVariant[] = [
       },
       {
         title: "Салаты",
+        images: ["/banquet/caesar.jpg"],
         items: [
           "Цезарь с курой (айсберг, куриное филе, яйцо, гренки, пармезан, томаты черри, соус цезарь, зелень)",
           "Деревенский с говядиной (картофель, морковь, огурец солёный, яйцо, говядина отварная, горошек, майонез, зелень)",
@@ -97,7 +100,7 @@ const MENU_VARIANTS: MenuVariant[] = [
       },
       {
         title: "Горячее",
-        images: ["/banquet/shashlik.jpg"],
+        images: ["/banquet/shashlik.jpg", "/banquet/grill-veg.jpg", "/banquet/salmon-steak.jpg"],
         items: [
           "Филе бедра цыплёнка, маринованного в ананасовом пюре",
           "Шашлык из свиной шейки с копчёной паприкой",
@@ -114,7 +117,12 @@ const MENU_VARIANTS: MenuVariant[] = [
     sections: [
       {
         title: "Холодные закуски",
-        images: ["/banquet/meat-plate.jpg", "/banquet/fish.jpg", "/banquet/cheese.jpg"],
+        images: [
+          "/banquet/meat-plate.jpg",
+          "/banquet/fish.jpg",
+          "/banquet/cheese.jpg",
+          "/banquet/bruschetta.jpg",
+        ],
         items: [
           "Мясные деликатесы (карбонад, ласунак, рулет из птицы, зелень, хрен)",
           "Рыбное ассорти (форель с/с, горбуша х/к, зубатка х/к, укроп, маслины)",
@@ -126,6 +134,7 @@ const MENU_VARIANTS: MenuVariant[] = [
       },
       {
         title: "Салаты",
+        images: ["/banquet/caesar.jpg"],
         items: [
           "Цезарь с курой (айсберг, куриное филе, яйцо, гренки, пармезан, томаты черри, соус цезарь, зелень)",
           "Салат с языком (варёный говяжий язык, перец сладкий, лук ялтинский, чеснок, красная фасоль, помидоры, оливковое масло)",
@@ -135,7 +144,7 @@ const MENU_VARIANTS: MenuVariant[] = [
       },
       {
         title: "Горячее",
-        images: ["/banquet/shashlik.jpg"],
+        images: ["/banquet/shashlik.jpg", "/banquet/grill-veg.jpg", "/banquet/salmon-steak.jpg"],
         items: [
           "Филе бедра цыплёнка, маринованного в ананасовом пюре",
           "Шашлык из свиной шейки с копчёной паприкой",
@@ -152,7 +161,12 @@ const MENU_VARIANTS: MenuVariant[] = [
     sections: [
       {
         title: "Холодные закуски",
-        images: ["/banquet/meat-plate.jpg", "/banquet/fish.jpg", "/banquet/cheese.jpg"],
+        images: [
+          "/banquet/meat-plate.jpg",
+          "/banquet/fish.jpg",
+          "/banquet/cheese.jpg",
+          "/banquet/bruschetta.jpg",
+        ],
         items: [
           "Мясные деликатесы (карбонад, ласунак, рулет из птицы, зелень, хрен)",
           "Рыбное ассорти (форель с/с, горбуша х/к, зубатка х/к, укроп, маслины)",
@@ -164,6 +178,7 @@ const MENU_VARIANTS: MenuVariant[] = [
       },
       {
         title: "Салаты",
+        images: ["/banquet/caesar.jpg"],
         items: [
           "Цезарь с курой (айсберг, куриное филе, яйцо, гренки, пармезан, томаты черри, соус цезарь, зелень)",
           "Салат греческий с фетой",
@@ -173,7 +188,7 @@ const MENU_VARIANTS: MenuVariant[] = [
       },
       {
         title: "Горячее",
-        images: ["/banquet/shashlik.jpg"],
+        images: ["/banquet/shashlik.jpg", "/banquet/grill-veg.jpg", "/banquet/salmon-steak.jpg"],
         items: [
           "Филе бедра цыплёнка, маринованного в ананасовом пюре",
           "Шашлык из свиной шейки с копчёной паприкой",
@@ -190,7 +205,12 @@ const MENU_VARIANTS: MenuVariant[] = [
     sections: [
       {
         title: "Холодные закуски",
-        images: ["/banquet/meat-plate.jpg", "/banquet/fish.jpg", "/banquet/cheese.jpg"],
+        images: [
+          "/banquet/meat-plate.jpg",
+          "/banquet/fish.jpg",
+          "/banquet/cheese.jpg",
+          "/banquet/bruschetta.jpg",
+        ],
         items: [
           "Мясные деликатесы (карбонад, ласунак, рулет из птицы, зелень, хрен)",
           "Рыбное ассорти (форель с/с, горбуша х/к, зубатка х/к, укроп, маслины)",
@@ -202,6 +222,7 @@ const MENU_VARIANTS: MenuVariant[] = [
       },
       {
         title: "Салаты",
+        images: ["/banquet/caesar.jpg"],
         items: [
           "Капрезе (томаты, моцарелла буффало, зелень, соус песто, бальзамический крем, кедровый орех)",
           "Салат с языком (варёный говяжий язык, перец сладкий, лук ялтинский, чеснок, красная фасоль, помидоры, оливковое масло)",
@@ -212,7 +233,7 @@ const MENU_VARIANTS: MenuVariant[] = [
       },
       {
         title: "Горячее",
-        images: ["/banquet/shashlik.jpg", "/banquet/salmon-steak.jpg"],
+        images: ["/banquet/shashlik.jpg", "/banquet/grill-veg.jpg", "/banquet/salmon-steak.jpg"],
         items: [
           "Филе бедра цыплёнка, маринованного в ананасовом пюре",
           "Шашлык из свиной шейки с копчёной паприкой",
@@ -225,7 +246,16 @@ const MENU_VARIANTS: MenuVariant[] = [
   },
 ];
 
-const SECTION_ICONS = [UtensilsCrossed, Salad, Flame];
+const DISH_ALTS: Record<string, string> = {
+  "/banquet/meat-plate.jpg": "Мясное ассорти",
+  "/banquet/fish.jpg": "Рыбное ассорти",
+  "/banquet/cheese.jpg": "Сырное плато",
+  "/banquet/bruschetta.jpg": "Брускетты с лососем, икрой и томатами",
+  "/banquet/caesar.jpg": "Салат цезарь с курицей",
+  "/banquet/shashlik.jpg": "Шашлык из свиной шейки",
+  "/banquet/grill-veg.jpg": "Овощи гриль сезонные",
+  "/banquet/salmon-steak.jpg": "Стейк радужной форели с овощами",
+};
 
 export default function Events() {
   const [activeMenu, setActiveMenu] = useState(0);
@@ -239,12 +269,12 @@ export default function Events() {
     <div className="min-h-screen pt-20">
       <div className="bg-[#141414] py-20">
         <div className="container-site text-center">
-          <p className="text-xs uppercase tracking-[0.3em] text-[#bb9c69]">
+          <p className="text-xs uppercase tracking-[0.3em] text-[#45c1af]">
             Загородные праздники
           </p>
           <h1 className="font-display mx-auto mt-3 max-w-3xl text-3xl font-bold text-white sm:text-5xl">
             Мероприятия и{" "}
-            <span className="text-[#bb9c69]">банкетная служба</span>
+            <span className="text-[#45c1af]">банкетная служба</span>
           </h1>
           <p className="mx-auto mt-5 max-w-xl text-sm leading-relaxed text-white/60">
             Подберём коттедж под формат вашего события и организуем банкет:
@@ -259,11 +289,11 @@ export default function Events() {
           {EVENT_TYPES.map((e) => (
             <div
               key={e.title}
-              className="group border border-[#e8e2d5] bg-white p-8 transition-all hover:border-[#bb9c69] hover:shadow-lg"
+              className="group border border-[#e3e7e4] bg-white p-8 transition-all hover:border-[#1f7567] hover:shadow-lg"
             >
               <e.icon
                 size={36}
-                className="text-[#bb9c69] transition-transform group-hover:scale-110"
+                className="text-[#1f7567] transition-transform group-hover:scale-110"
               />
               <h2 className="font-display mt-5 text-xl font-bold text-[#1f1f1f]">
                 {e.title}
@@ -277,7 +307,7 @@ export default function Events() {
                     key={f}
                     className="flex items-center gap-2 text-xs text-[#1f1f1f]/70"
                   >
-                    <span className="h-1 w-1 rounded-full bg-[#bb9c69]" />
+                    <span className="h-1 w-1 rounded-full bg-[#1f7567]" />
                     {f}
                   </li>
                 ))}
@@ -292,12 +322,12 @@ export default function Events() {
         <div className="container-site">
           <div className="grid items-center gap-12 lg:grid-cols-2">
             <div>
-              <p className="text-xs uppercase tracking-[0.3em] text-[#bb9c69]">
+              <p className="text-xs uppercase tracking-[0.3em] text-[#45c1af]">
                 Банкетная служба
               </p>
               <h2 className="font-display mt-3 text-3xl font-bold text-white sm:text-4xl">
                 Праздничный стол,{" "}
-                <span className="text-[#bb9c69]">о котором не нужно думать</span>
+                <span className="text-[#45c1af]">о котором не нужно думать</span>
               </h2>
               <p className="mt-5 max-w-lg text-sm leading-relaxed text-white/60">
                 Наша банкетная служба полностью берёт на себя застолье: привезём,
@@ -312,7 +342,7 @@ export default function Events() {
                   "Меню адаптируем под пожелания и бюджет",
                 ].map((t) => (
                   <li key={t} className="flex items-center gap-3 text-sm text-white/70">
-                    <Check size={16} className="shrink-0 text-[#bb9c69]" />
+                    <Check size={16} className="shrink-0 text-[#45c1af]" />
                     {t}
                   </li>
                 ))}
@@ -324,17 +354,17 @@ export default function Events() {
                 alt="Сервированный банкетный стол"
                 className="h-full w-full object-cover"
               />
-              <div className="absolute inset-0 border border-[#bb9c69]/30" />
+              <div className="absolute inset-0 border border-[#45c1af]/30" />
             </div>
           </div>
         </div>
       </section>
 
       {/* Меню */}
-      <section className="bg-[#f9f7f2] py-20">
+      <section className="bg-[#f2f6f4] py-20">
         <div className="container-site">
           <div className="text-center">
-            <p className="text-xs uppercase tracking-[0.3em] text-[#bb9c69]">
+            <p className="text-xs uppercase tracking-[0.3em] text-[#1f7567]">
               Банкетное меню
             </p>
             <h2 className="font-display mt-3 text-3xl font-bold text-[#1f1f1f] sm:text-4xl">
@@ -354,8 +384,8 @@ export default function Events() {
                 onClick={() => setActiveMenu(i)}
                 className={`border px-6 py-3 text-sm uppercase tracking-wider transition-colors ${
                   i === activeMenu
-                    ? "border-[#bb9c69] bg-[#bb9c69] text-white"
-                    : "border-[#1f1f1f]/20 bg-white text-[#1f1f1f]/70 hover:border-[#bb9c69] hover:text-[#bb9c69]"
+                    ? "border-[#1f7567] bg-[#1f7567] text-white"
+                    : "border-[#1f1f1f]/20 bg-white text-[#1f1f1f]/70 hover:border-[#1f7567] hover:text-[#1f7567]"
                 }`}
               >
                 {v.name} · {v.price.toLocaleString("ru-RU")} ₽
@@ -366,35 +396,56 @@ export default function Events() {
           {/* Состав меню */}
           <div className="mx-auto mt-12 max-w-5xl">
             <div className="mb-8 flex items-center justify-center gap-4">
-              <span className="h-px w-16 bg-[#bb9c69]" />
+              <span className="h-px w-16 bg-[#1f7567]" />
               <p className="font-display text-xl font-bold text-[#1f1f1f]">
                 {menu.name} — {menu.price.toLocaleString("ru-RU")} ₽/персона
               </p>
-              <span className="h-px w-16 bg-[#bb9c69]" />
+              <span className="h-px w-16 bg-[#1f7567]" />
             </div>
 
-            <div className="space-y-12">
+            <div className="space-y-6">
               {menu.sections.map((section, si) => {
-                const Icon = SECTION_ICONS[si] ?? UtensilsCrossed;
+                const images = section.images ?? [];
+                const wide = images.length === 1;
                 return (
-                  <div key={section.title}>
+                  <div
+                    key={section.title}
+                    className="border border-[#e3e7e4] bg-white p-5 shadow-sm sm:p-8"
+                  >
                     <div className="flex items-center gap-4">
-                      <Icon size={26} className="text-[#bb9c69]" />
-                      <h3 className="font-display text-2xl font-bold uppercase tracking-wide text-[#1f1f1f]">
+                      <span className="font-display flex h-10 w-10 shrink-0 items-center justify-center border border-[#1f7567]/50 text-sm text-[#1f7567]">
+                        0{si + 1}
+                      </span>
+                      <h3 className="font-display text-xl font-bold uppercase tracking-wide text-[#1f1f1f] sm:text-2xl">
                         {section.title}
                       </h3>
-                      <span className="h-px flex-1 bg-[#e8e2d5]" />
+                      <span className="h-px flex-1 bg-[#e3e7e4]" />
                     </div>
 
-                    {section.images && (
-                      <div className="mt-5 grid grid-cols-2 gap-4 sm:grid-cols-3">
-                        {section.images.map((img) => (
-                          <div key={img} className="overflow-hidden">
+                    {images.length > 0 && (
+                      <div
+                        className={`mt-6 grid gap-3 sm:gap-4 ${
+                          wide
+                            ? "grid-cols-1"
+                            : images.length === 3
+                              ? "grid-cols-3"
+                              : "grid-cols-2 lg:grid-cols-4"
+                        }`}
+                      >
+                        {images.map((img) => (
+                          <div
+                            key={img}
+                            className={`group overflow-hidden ${
+                              wide
+                                ? "aspect-[16/9] sm:aspect-[21/9]"
+                                : "aspect-[4/3]"
+                            }`}
+                          >
                             <img
                               src={img}
-                              alt={section.title}
+                              alt={DISH_ALTS[img] ?? section.title}
                               loading="lazy"
-                              className="h-44 w-full object-cover transition-transform duration-500 hover:scale-105 sm:h-52"
+                              className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-105"
                             />
                           </div>
                         ))}
@@ -407,7 +458,7 @@ export default function Events() {
                           key={item}
                           className="flex gap-3 text-sm leading-relaxed text-[#1f1f1f]/75"
                         >
-                          <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-[#bb9c69]" />
+                          <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-[#1f7567]" />
                           {item}
                         </li>
                       ))}
@@ -430,7 +481,7 @@ export default function Events() {
           <div>
             <h2 className="font-display text-3xl font-bold text-white sm:text-4xl">
               Обсудим ваше{" "}
-              <span className="text-[#bb9c69]">мероприятие?</span>
+              <span className="text-[#45c1af]">мероприятие?</span>
             </h2>
             <p className="mt-4 max-w-md text-sm leading-relaxed text-white/60">
               Расскажите о дате, количестве гостей и формате — предложим
@@ -444,7 +495,7 @@ export default function Events() {
       </section>
 
       <div className="container-site py-14 text-center">
-        <Link to="/catalog" className="btn-gold">
+        <Link to="/catalog" className="btn-brand">
           Смотреть коттеджи
         </Link>
       </div>
