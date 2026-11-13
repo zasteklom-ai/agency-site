@@ -181,7 +181,14 @@ export function LeadForm({
           name="phone"
           render={({ field }) => (
             <IMaskInput
-              {...field}
+              inputRef={field.ref}
+              name={field.name}
+              value={field.value}
+              // onChange из field нельзя: React глотает синтетический input-event,
+              // потому что imask сам пишет el.value до того, как событие
+              // всплывёт к React. onAccept — каноничная точка интеграции.
+              onAccept={(value) => field.onChange(value)}
+              onBlur={field.onBlur}
               mask="+{7} (000) 000-00-00"
               lazy={false}
               placeholder="+7 (___) ___-__-__"
