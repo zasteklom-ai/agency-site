@@ -287,7 +287,7 @@ export default function Catalog() {
         </aside>
 
         {/* Сетка */}
-        <div className="flex-1">
+        <div className="min-w-0 flex-1">
           {isLoading ? (
             <div className="grid gap-6 sm:grid-cols-2 xl:grid-cols-3">
               {Array.from({ length: 6 }).map((_, i) => (
@@ -308,7 +308,7 @@ export default function Catalog() {
                 ))}
               </div>
               {totalPages > 1 && (
-                <div className="mt-12 flex items-center justify-center gap-2">
+                <div className="mt-12 flex flex-wrap items-center justify-center gap-2">
                   {Array.from({ length: totalPages }).map((_, i) => (
                     <button
                       key={i}
