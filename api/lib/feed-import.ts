@@ -92,9 +92,11 @@ export async function planFeedImport(
   };
 }
 
-function cottageSet(o: FeedOffer) {
+function cottageSet(
+  o: FeedOffer,
+): Partial<typeof cottages.$inferInsert> {
   const flags = amenityFlags(o.amenities);
-  return {
+  const all: Partial<typeof cottages.$inferInsert> = {
     title: o.title,
     description: o.description,
     address: o.address,
@@ -107,8 +109,19 @@ function cottageSet(o: FeedOffer) {
     landArea: o.landArea,
     price: o.price,
     amenities: o.amenities.length > 0 ? o.amenities.join(", ") : null,
-    ...flags,
+    ...(o.amenities.length > 0 ? flags : {}),
   };
+  // На update затираем только поля, реально присутствующие в фиде:
+  // у CRM-фида нет beds/цен по дням недели/депозита — ручные данные сайта
+  // null-ами не уничтожаются. Удобства синхронизируем, только если фид
+  // вообще несёт распознаваемые теги удобств (иначе список пуст).
+  const set: Partial<typeof cottages.$inferInsert> = {};
+  for (const [k, v] of Object.entries(all)) {
+    if (v !== null && v !== undefined) {
+      (set as Record<string, unknown>)[k] = v;
+    }
+  }
+  return set;
 }
 
 /** Базовая защита от SSRF: фид приходит от админа, но URL фото всё равно
@@ -333,6 +346,9 @@ async function importOffer(
   } else {
     const [r] = await db.insert(cottages).values({
       ...set,
+      // title у FeedOffer всегда заполнен (генерируется при отсутствии в фиде),
+      // поэтому для insert возвращаем его явно — Partial тип его опционализирует
+      title: offer.title,
       externalId: offer.externalId,
       status: "active",
     });

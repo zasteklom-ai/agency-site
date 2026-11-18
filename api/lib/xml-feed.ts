@@ -179,21 +179,51 @@ function buildAddress(loc: XmlRecord): string | null {
 
 function parseArea(v: unknown): { value: number; unit: string } | null {
   const rec = asRecord(v);
-  const value = num(rec["@_value"] ?? (typeof v === "string" || typeof v === "number" ? v : null));
+  const value = num(
+    rec["@_value"] ?? rec["value"] ?? (typeof v === "string" || typeof v === "number" ? v : null),
+  );
   if (value == null) return null;
-  return { value, unit: text(rec["@_unit"])?.toLowerCase() ?? "" };
+  // CRM мешает кириллицу с латиницей («cотка» с латинской c) — нормализуем
+  const unit = (text(rec["@_unit"]) ?? text(rec["unit"]) ?? "").toLowerCase().replace(/^c/, "с");
+  return { value, unit };
+}
+
+function fmtNum(n: number): string {
+  return Number.isInteger(n) ? String(n) : String(Math.round(n * 100) / 100);
+}
+
+const CATEGORY_LABELS: Record<string, string> = {
+  коттедж: "Коттедж",
+  дом: "Дом",
+  таунхаус: "Таунхаус",
+  "часть дома": "Часть дома",
+};
+
+/** У части CRM-объектов в фиде нет <title> — генерируем по той же
+ * конвенции, что и текущие данные сайта: «Коттедж 600 м² на участке 15 сот.» */
+function buildTitle(
+  category: string | null,
+  area: { value: number } | null,
+  land: { value: number } | null,
+  loc: XmlRecord,
+): string {
+  const cat = CATEGORY_LABELS[(category ?? "").toLowerCase()] ?? "Коттедж";
+  if (area || land) {
+    const parts = [cat];
+    if (area) parts.push(`${fmtNum(area.value)} м²`);
+    if (land) parts.push(`на участке ${fmtNum(land.value)} сот.`);
+    return parts.join(" ");
+  }
+  const place =
+    text(loc["locality-name"]) ?? text(loc["district"]) ?? text(loc["region"]);
+  return place ? `${cat} в ${place}` : cat;
 }
 
 function parseOffer(node: unknown, index: number): { offer?: FeedOffer; error?: FeedError } {
   const o = asRecord(node);
   const externalId = text(o["@_internal-id"]);
-  const title = text(o["title"]);
-
   if (!externalId) {
     return { error: { index, externalId: null, message: "нет атрибута internal-id" } };
-  }
-  if (!title) {
-    return { error: { index, externalId, message: "нет <title>" } };
   }
 
   const loc = asRecord(o["location"]);
@@ -204,21 +234,30 @@ function parseOffer(node: unknown, index: number): { offer?: FeedOffer; error?: 
   if (lng != null && (lng < -180 || lng > 180)) lng = null;
 
   // Цена: берём период «день» (посуточная аренда), иначе первую.
-  // Валюта не RUB — цену не берём: пересчёта курсов в проекте нет.
+  // Форма в фидах разная: атрибуты <price value=…/> или дети
+  // <price><value>…</value><currency>…</currency></price>. Валюты RUB/RUR.
   let price: number | null = null;
   const prices = asArray(o["price"]);
   const pick =
-    prices.find((p) => text(asRecord(p)["@_period"]) === "день") ?? prices[0];
+    prices.find(
+      (p) => (text(asRecord(p)["@_period"]) ?? text(asRecord(p)["period"])) === "день",
+    ) ?? prices[0];
   if (pick != null) {
     const rec = asRecord(pick);
-    const currency = text(rec["@_currency"]);
-    if (!currency || currency.toUpperCase() === "RUB") {
-      price = intOrNull(num(rec["@_value"] ?? text(rec)));
+    const currency = (
+      text(rec["@_currency"]) ??
+      text(rec["currency"]) ??
+      ""
+    ).toUpperCase();
+    if (currency === "" || currency === "RUB" || currency === "RUR") {
+      price = intOrNull(
+        num(rec["@_value"] ?? rec["value"] ?? (typeof pick === "string" || typeof pick === "number" ? pick : null)),
+      );
     }
   }
 
   const area = parseArea(o["area"]);
-  const land = parseArea(o["land-area"]);
+  const land = parseArea(o["land-area"] ?? o["lot-area"]);
   const landArea =
     land == null
       ? null
@@ -227,6 +266,12 @@ function parseOffer(node: unknown, index: number): { offer?: FeedOffer; error?: 
         : land.unit.startsWith("га")
           ? land.value * 100
           : land.value / 10_000; // кв. м → сотки
+
+  // У части объектов <title> отсутствует — генерируем из category/area/lot
+  const rawTitle = text(o["title"]);
+  const title = rawTitle
+    ? rawTitle.replace(/\s+/g, " ")
+    : buildTitle(text(o["category"]), area, land, loc);
 
   const amenities = collectAmenities(o);
 
@@ -249,7 +294,8 @@ function parseOffer(node: unknown, index: number): { offer?: FeedOffer; error?: 
       district: text(loc["district"]) ?? text(loc["locality-name"]) ?? text(loc["region"]),
       lat,
       lng,
-      bedrooms: intOrNull(num(o["bedrooms"] ?? o["bedrooms-count"])),
+      // rooms — комнаты у части CRM-объектов, bedrooms в фиде не встречается
+      bedrooms: intOrNull(num(o["bedrooms"] ?? o["bedrooms-count"] ?? o["rooms"])),
       beds: intOrNull(num(o["beds"] ?? o["sleeping-places"] ?? o["sleep-places"])),
       totalArea: area?.unit.startsWith("сот") ? null : area?.value ?? null,
       landArea: landArea != null ? Math.round(landArea * 100) / 100 : null,

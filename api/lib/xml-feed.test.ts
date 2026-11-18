@@ -118,4 +118,50 @@ describe("parseFeedXml", () => {
       `</realty-feed>`;
     expect(() => parseFeedXml(many)).toThrow(/лимита/);
   });
+
+  // Реальный фид CRM (4ve.ru / gorodamira): цена и площади — детьми,
+  // участок — <lot-area>, валюта RUR, у части объектов нет <title>,
+  // комнаты — <rooms>, «cотка» с латинской c.
+  it("парсит CRM-формат: дети price/area/lot-area, rooms, генерит title", () => {
+    const xml = `<realty-feed xmlns="http://webmaster.yandex.ru/schemas/feed/realty/2010-06">
+      <offer internal-id="1325">
+        <type>аренда</type>
+        <category>коттедж</category>
+        <location>
+          <region>Ленинградская область</region>
+          <district>Выборгский район</district>
+          <locality-name>посёлок Матросово</locality-name>
+          <address>Тихая улица, д.62</address>
+          <latitude>60.64283</latitude>
+          <longitude>28.710615</longitude>
+        </location>
+        <price><value>60000</value><currency>RUB</currency><period>день</period></price>
+        <area><value>600</value><unit>кв.м</unit></area>
+        <lot-area><value>15</value><unit>cотка</unit></lot-area>
+        <rooms>5</rooms>
+        <image>https://goroda-mira.ru/files/a.jpeg</image>
+      </offer>
+    </realty-feed>`;
+    const { offers, errors } = parseFeedXml(xml);
+    expect(errors).toEqual([]);
+    const o = offers[0];
+    expect(o.price).toBe(60000);
+    expect(o.totalArea).toBe(600);
+    expect(o.landArea).toBe(15); // «cотка» с латинской c распознана
+    expect(o.bedrooms).toBe(5); // rooms → bedrooms
+    expect(o.title).toBe("Коттедж 600 м² на участке 15 сот.");
+  });
+
+  it("валюта RUR принимается; title без площадей — «Коттедж в <место>»", () => {
+    const xml = `<realty-feed>
+      <offer internal-id="1">
+        <category>дом</category>
+        <location><region>Ленинградская область</region></location>
+        <price><value>35000</value><currency>RUR</currency><period>день</period></price>
+      </offer>
+    </realty-feed>`;
+    const { offers } = parseFeedXml(xml);
+    expect(offers[0].price).toBe(35000);
+    expect(offers[0].title).toBe("Дом в Ленинградская область");
+  });
 });
