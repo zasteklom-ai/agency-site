@@ -42,6 +42,9 @@ export function Footer() {
             <Link to="/events" className="hover:text-[#45c1af]">
               Мероприятия и банкеты
             </Link>
+            <Link to="/partners" className="hover:text-[#45c1af]">
+              Партнёры
+            </Link>
             <Link to="/reviews" className="hover:text-[#45c1af]">
               Отзывы
             </Link>

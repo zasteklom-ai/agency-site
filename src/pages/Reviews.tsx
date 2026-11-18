@@ -1,24 +1,14 @@
-import { Star, MapPin, BadgeCheck, MessageCircleHeart, ExternalLink, Award } from "lucide-react";
+import {
+  BadgeCheck,
+  MessageCircleHeart,
+  ExternalLink,
+  Award,
+  Quote,
+} from "lucide-react";
 import { LeadForm } from "@/components/LeadForm";
+import { GuestReviewsCarousel } from "@/components/GuestReviewsCarousel";
 import { usePageMeta } from "@/hooks/usePageMeta";
-import { REVIEW_LINKS } from "@/config";
-
-const MAP_CARDS = [
-  {
-    name: "Яндекс Карты",
-    url: REVIEW_LINKS.yandexMaps,
-    description:
-      "Агентство недвижимости «Города Мира» на Яндекс Картах — живые отзывы гостей, фотографии домов и наш рейтинг.",
-    action: "Читать отзывы на Яндекс Картах",
-  },
-  {
-    name: "2ГИС",
-    url: REVIEW_LINKS.gis2,
-    description:
-      "Наша карточка в справочнике 2ГИС: отзывы клиентов, контакты и точное расположение офиса.",
-    action: "Читать отзывы в 2ГИС",
-  },
-];
+import { SOCIAL } from "@/config";
 
 const SERVICE_AWARDS = [
   {
@@ -36,7 +26,7 @@ const SERVICE_AWARDS = [
 export default function Reviews() {
   usePageMeta(
     "Отзывы об агентстве Города Мира — высший уровень сервиса на ЦИАН и Авито",
-    "Отзывы гостей на Яндекс Картах и 2ГИС. Агентство «Города Мира» — обладатель статуса «Суперагент» ЦИАН и высшего уровня сервиса Авито.",
+    "Отзывы гостей об аренде коттеджей и банкетах от агентства «Города Мира». Суперагент ЦИАН, высший уровень сервиса Авито.",
   );
   return (
     <div className="min-h-screen pt-20">
@@ -91,69 +81,73 @@ export default function Reviews() {
         </div>
       </section>
 
-      {/* Отзывы на картах */}
-      <section className="section-dark py-20">
+      {/* Отзывы гостей */}
+      <section className="bg-[#f3f7f6] py-20">
         <div className="container-site">
           <div className="text-center">
-            <Star size={28} className="mx-auto text-[#45c1af]" />
-            <h2 className="font-display mt-4 text-3xl font-bold text-white sm:text-4xl">
-              Читайте отзывы <span className="text-[#45c1af]">на картах</span>
-            </h2>
-            <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-white/60">
-              Все отзывы размещены на независимых площадках — мы не редактируем
-              и не удаляем их. Посмотрите, что говорят гости, и оставьте свой
-              отзыв после праздника.
+            <div className="mx-auto flex size-14 items-center justify-center rounded-full bg-[#1f7567]/10">
+              <Quote size={26} className="text-[#1f7567]" />
+            </div>
+            <p className="mt-5 text-xs uppercase tracking-[0.3em] text-[#1f7567]">
+              Отзывы гостей
             </p>
-          </div>
-          <div className="mx-auto mt-12 grid max-w-4xl gap-6 sm:grid-cols-2">
-            {MAP_CARDS.map((m) => (
-              <a
-                key={m.name}
-                href={m.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group flex flex-col bg-[#1f1f1f] p-8 transition-colors hover:bg-[#242424]"
-              >
-                <MapPin size={32} className="text-[#45c1af]" />
-                <h3 className="font-display mt-5 text-2xl font-bold text-white">
-                  {m.name}
-                </h3>
-                <p className="mt-3 flex-1 text-sm leading-relaxed text-white/60">
-                  {m.description}
-                </p>
-                <span className="mt-6 inline-flex items-center gap-2 text-xs uppercase tracking-wider text-[#45c1af] transition-colors group-hover:text-white">
-                  {m.action} <ExternalLink size={14} />
-                </span>
-              </a>
-            ))}
+            <h2 className="font-display mt-3 text-3xl font-bold text-[#1f1f1f] sm:text-4xl">
+              Что говорят <span className="text-[#1f7567]">наши гости</span>
+            </h2>
+            <p className="mx-auto mt-4 max-w-xl text-sm leading-relaxed text-[#1f1f1f]/60">
+              Все отзывы — реальные: гости оставляют их на независимых
+              площадках после праздников, а мы собрали их здесь, чтобы вам было
+              проще сделать выбор.
+            </p>
           </div>
 
-          <div className="mx-auto mt-12 max-w-3xl border border-white/10 bg-[#1a1a1a] p-8 text-center">
-            <MessageCircleHeart size={30} className="mx-auto text-[#45c1af]" />
-            <p className="mt-4 text-sm leading-relaxed text-white/70">
-              Побывали у нас на празднике? Расскажите о впечатлениях на Яндекс
-              Картах или в 2ГИС — ваш отзыв поможет другим гостям сделать выбор,
+          <div className="mt-12">
+            <GuestReviewsCarousel />
+          </div>
+
+          <div className="mx-auto mt-14 max-w-3xl bg-[#1f7567] p-8 text-center sm:p-10">
+            <MessageCircleHeart
+              size={30}
+              className="mx-auto text-white"
+            />
+            <p className="mt-4 text-sm leading-relaxed text-white/90">
+              Побывали у нас на празднике? Расскажите о впечатлениях в нашей
+              группе ВКонтакте — ваш отзыв поможет другим гостям сделать выбор,
               а нам — поддерживать высший уровень сервиса.
             </p>
+            <a
+              href={SOCIAL.vk}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-5 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-white underline-offset-4 transition-colors hover:underline"
+            >
+              Оставить отзыв в ВКонтакте <ExternalLink size={14} />
+            </a>
           </div>
         </div>
       </section>
 
       {/* Лид-форма */}
-      <section className="container-site py-20">
-        <div className="grid items-center gap-12 lg:grid-cols-2">
-          <div>
-            <h2 className="font-display text-3xl font-bold text-[#1f1f1f] sm:text-4xl">
-              Станьте нашим следующим{" "}
-              <span className="text-[#1f7567]">довольным гостем</span>
-            </h2>
-            <p className="mt-4 max-w-md text-sm leading-relaxed text-[#1f1f1f]/60">
-              Оставьте заявку — подберём коттедж под ваш праздник и организуем
-              всё под ключ, как уже сделали для сотен семей и компаний.
-            </p>
-          </div>
-          <div className="bg-[#1f1f1f] p-8 text-white sm:p-10">
-            <LeadForm dark />
+      <section className="bg-[#1a1a1a] py-20">
+        <div className="container-site">
+          <div className="grid items-center gap-12 lg:grid-cols-2">
+            <div>
+              <p className="text-xs uppercase tracking-[0.3em] text-[#45c1af]">
+                Обратная связь
+              </p>
+              <h2 className="font-display mt-3 text-3xl font-bold text-white sm:text-4xl">
+                Станьте нашим следующим{" "}
+                <span className="text-[#45c1af]">довольным гостем</span>
+              </h2>
+              <p className="mt-4 max-w-md text-sm leading-relaxed text-white/60">
+                Оставьте заявку — подберём коттедж под ваш праздник и
+                организуем всё под ключ, как уже сделали для сотен семей и
+                компаний.
+              </p>
+            </div>
+            <div className="border border-white/10 bg-[#1f1f1f] p-8 text-white sm:p-10">
+              <LeadForm dark />
+            </div>
           </div>
         </div>
       </section>

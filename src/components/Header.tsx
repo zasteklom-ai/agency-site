@@ -6,6 +6,7 @@ import { PhoneContact } from "./PhoneContact";
 const NAV = [
   { to: "/catalog", label: "Каталог коттеджей" },
   { to: "/events", label: "Мероприятия и банкеты" },
+  { to: "/partners", label: "Партнёры" },
   { to: "/reviews", label: "Отзывы" },
   { to: "/about", label: "О нас" },
   { to: "/contacts", label: "Контакты" },

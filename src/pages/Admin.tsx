@@ -3,6 +3,7 @@ import { Link } from "react-router";
 import { trpc } from "@/providers/trpc";
 import { formatPrice } from "@/components/CottageCard";
 import { CottageEditForm } from "@/components/CottageEditForm";
+import { FeedImportDialog } from "@/components/FeedImportDialog";
 
 const TOKEN_KEY = "gm_admin_token";
 
@@ -13,6 +14,7 @@ export default function Admin() {
   const [loginError, setLoginError] = useState("");
   const [editingId, setEditingId] = useState<number | null>(null);
   const [creating, setCreating] = useState(false);
+  const [feedImport, setFeedImport] = useState(false);
 
   const login = trpc.admin.login.useMutation();
   const utils = trpc.useUtils();
@@ -92,12 +94,20 @@ export default function Admin() {
           </h1>
           <div className="flex flex-wrap items-center gap-2">
             {tab === "cottages" && (
-              <button
-                onClick={() => setCreating(true)}
-                className="bg-[#1f7567] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#185f54]"
-              >
-                + Добавить объект
-              </button>
+              <>
+                <button
+                  onClick={() => setFeedImport(true)}
+                  className="border border-[#1f7567] px-4 py-2 text-sm font-semibold text-[#1f7567] transition-colors hover:bg-[#1f7567] hover:text-white"
+                >
+                  XML-импорт
+                </button>
+                <button
+                  onClick={() => setCreating(true)}
+                  className="bg-[#1f7567] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#185f54]"
+                >
+                  + Добавить объект
+                </button>
+              </>
             )}
             {(
               [
@@ -126,6 +136,12 @@ export default function Admin() {
             >
               Выйти
             </button>
+            <Link
+              to="/admin/partners"
+              className="border border-[#d8dcd9] px-4 py-2 text-sm text-[#1f1f1f]/70 transition-colors hover:border-[#1f7567] hover:text-[#1f7567]"
+            >
+              Партнёрские площадки →
+            </Link>
           </div>
         </div>
 
@@ -307,6 +323,8 @@ export default function Admin() {
           onCreated={(id) => setEditingId(id)}
         />
       )}
+
+      {feedImport && <FeedImportDialog onClose={() => setFeedImport(false)} />}
     </div>
   );
 }

@@ -7,10 +7,13 @@ import Home from "./pages/Home";
 import Catalog from "./pages/Catalog";
 import CottageDetail from "./pages/CottageDetail";
 import Events from "./pages/Events";
+import Partners from "./pages/Partners";
+import PartnerDetail from "./pages/PartnerDetail";
 import Reviews from "./pages/Reviews";
 import About from "./pages/About";
 import Contacts from "./pages/Contacts";
 import Admin from "./pages/Admin";
+import AdminPartners from "./pages/AdminPartners";
 import AdminCottageCalendar from "./pages/AdminCottageCalendar";
 
 export default function App() {
@@ -31,10 +34,13 @@ export default function App() {
           <Route path="/catalog" element={<Catalog />} />
           <Route path="/cottage/:id" element={<CottageDetail />} />
           <Route path="/events" element={<Events />} />
+          <Route path="/partners" element={<Partners />} />
+          <Route path="/partners/:slug" element={<PartnerDetail />} />
           <Route path="/reviews" element={<Reviews />} />
           <Route path="/about" element={<About />} />
           <Route path="/contacts" element={<Contacts />} />
           <Route path="/admin" element={<Admin />} />
+          <Route path="/admin/partners" element={<AdminPartners />} />
           <Route
             path="/admin/cottages/:id/calendar"
             element={<AdminCottageCalendar />}

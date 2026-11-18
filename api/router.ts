@@ -22,7 +22,19 @@ import { clientIp, rateLimit } from "./lib/ratelimit";
 import { sendTelegramLead } from "./lib/telegram";
 import { resolveSiteUrl } from "./lib/env";
 import { syncCottageIcal } from "./lib/ical-sync";
+import { decodeFeedXml, fetchFeedByUrl, planFeedImport, importFeed } from "./lib/feed-import";
 import { parseVkVideoUrl } from "@contracts/vk-video";
+import { partnerInputSchema } from "@contracts/partners";
+import {
+  listPublishedPartners,
+  findPartnerBySlug,
+  listAllPartners,
+  findPartnerById,
+  createPartner,
+  updatePartner,
+  setPartnerPublished,
+  deletePartner,
+} from "./queries/partners";
 
 const ADMIN_TOKEN = process.env.ADMIN_TOKEN || "goroda-mira-admin";
 
@@ -43,6 +55,31 @@ const vkVideoUrl = z
     message:
       "Непонятная ссылка на видео. Пример: https://vkvideo.ru/video-123456_789",
   });
+
+// Источник XML-фида: файл (base64) или URL — ровно один
+const feedSourceSchema = z
+  .object({
+    xmlBase64: z.string().min(1).max(25_000_000).optional(),
+    feedUrl: z
+      .string()
+      .trim()
+      .max(1024)
+      .refine((u) => u.startsWith("https://") || u.startsWith("http://"), {
+        message: "URL фида должен начинаться с http(s)://",
+      })
+      .optional(),
+  })
+  .refine((v) => Boolean(v.xmlBase64) !== Boolean(v.feedUrl), {
+    message: "Передайте либо файл (xmlBase64), либо URL фида (feedUrl)",
+  });
+
+async function resolveFeedXml(input: {
+  xmlBase64?: string;
+  feedUrl?: string;
+}): Promise<string> {
+  if (input.xmlBase64) return decodeFeedXml(input.xmlBase64);
+  return fetchFeedByUrl(input.feedUrl!);
+}
 
 export const appRouter = createRouter({
   ping: publicQuery.query(() => ({ ok: true, ts: Date.now() })),
@@ -270,6 +307,86 @@ export const appRouter = createRouter({
         }
         return { results };
       }),
+  }),
+
+  // Импорт объектов из XML-фида Яндекс.Недвижимости (realty-feed).
+  // parse — пробный прогон без записи; import — применение (фронт гоняет
+  // батчами по onlyExternalIds, чтобы не ловить таймаут на скачивании фото).
+  // Фид передаётся файлом (xmlBase64) или ссылкой (feedUrl) — ровно один источник.
+  feed: createRouter({
+    parse: protectedProcedure
+      .input(feedSourceSchema)
+      .mutation(async ({ input }) => {
+        try {
+          const xml = await resolveFeedXml(input);
+          return await planFeedImport(xml);
+        } catch (e) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: e instanceof Error ? e.message : "Не удалось разобрать фид",
+          });
+        }
+      }),
+
+    import: protectedProcedure
+      .input(
+        feedSourceSchema.extend({
+          onlyExternalIds: z.array(z.string().min(1).max(64)).max(100).optional(),
+        }),
+      )
+      .mutation(async ({ input }) => {
+        try {
+          const xml = await resolveFeedXml(input);
+          return await importFeed(xml, { onlyExternalIds: input.onlyExternalIds });
+        } catch (e) {
+          if (e instanceof TRPCError) throw e;
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: e instanceof Error ? e.message : "Не удалось разобрать фид",
+          });
+        }
+      }),
+  }),
+
+  // Партнёрские площадки: публично — только опубликованные; правки — через
+  // protectedProcedure (Bearer ADMIN_TOKEN), без токена в input.
+  partners: createRouter({
+    list: publicQuery.query(() => listPublishedPartners()),
+
+    bySlug: publicQuery
+      .input(z.object({ slug: z.string().trim().min(1).max(191) }))
+      .query(({ input }) => findPartnerBySlug(input.slug)),
+
+    adminList: protectedProcedure.query(() => listAllPartners()),
+
+    byId: protectedProcedure
+      .input(z.object({ id: z.number().int() }))
+      .query(async ({ input }) => {
+        const row = await findPartnerById(input.id);
+        if (!row) {
+          throw new TRPCError({ code: "NOT_FOUND", message: "Площадка не найдена" });
+        }
+        return row;
+      }),
+
+    create: protectedProcedure
+      .input(partnerInputSchema)
+      .mutation(({ input }) => createPartner(input)),
+
+    update: protectedProcedure
+      .input(partnerInputSchema.extend({ id: z.number().int() }))
+      .mutation(({ input }) => {
+        const { id, ...data } = input;
+        return updatePartner(id, data);
+      }),
+
+    setPublished: protectedProcedure
+      .input(z.object({ id: z.number().int(), isPublished: z.boolean() }))
+      .mutation(({ input }) => setPartnerPublished(input.id, input.isPublished)),
+
+    delete: protectedProcedure
+      .input(z.object({ id: z.number().int() }))
+      .mutation(({ input }) => deletePartner(input.id)),
   }),
 
   admin: createRouter({

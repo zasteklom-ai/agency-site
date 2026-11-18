@@ -15,6 +15,20 @@
       "when": 1794443222966,
       "tag": "0001_cottage-video-url",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1794941573205,
+      "tag": "0002_bumpy_tomorrow_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "5",
+      "when": 1794945169423,
+      "tag": "0003_glorious_frightful_four",
+      "breakpoints": true
     }
   ]
 }

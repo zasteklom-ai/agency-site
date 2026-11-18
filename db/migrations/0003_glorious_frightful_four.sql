@@ -1,0 +1,1 @@
+ALTER TABLE `cottage_photos` ADD `source_url` varchar(1024);

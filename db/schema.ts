@@ -9,9 +9,11 @@ import {
   timestamp,
   bigint,
   mysqlEnum,
+  json,
   uniqueIndex,
   index,
 } from "drizzle-orm/mysql-core";
+import type { PartnerContent } from "@contracts/partners";
 
 export const cottages = mysqlTable("cottages", {
   id: serial("id").primaryKey(),
@@ -54,6 +56,9 @@ export const cottagePhotos = mysqlTable("cottage_photos", {
   cottageId: bigint("cottage_id", { mode: "number", unsigned: true }).notNull(),
   url: varchar("url", { length: 512 }).notNull(),
   sortOrder: int("sort_order").notNull().default(0),
+  // URL фото в исходном XML-фиде — merge-ключ при повторном импорте:
+  // совпал source_url → фото оставляем, новые скачиваем, пропавшие удаляем.
+  sourceUrl: varchar("source_url", { length: 1024 }),
 });
 
 export const leads = mysqlTable("leads", {
@@ -102,3 +107,29 @@ export const bookings = mysqlTable(
     index("idx_bookings_cottage_range").on(t.cottageId, t.startDate),
   ],
 );
+
+// Партнёрские площадки (раздел «Партнёры»). Скаляры — колонки, структурные
+// разделы страницы (залы, проживание, мероприятия, услуги) — один JSON-столбец
+// content с типом из контрактов; валидация — zod-схемой на входе tRPC.
+export const partners = mysqlTable("partners", {
+  id: serial("id").primaryKey(),
+  slug: varchar("slug", { length: 191 }).notNull().unique(),
+  name: varchar("name", { length: 191 }).notNull(),
+  tagline: varchar("tagline", { length: 255 }).notNull().default(""),
+  excerpt: text("excerpt").notNull(),
+  location: varchar("location", { length: 191 }).notNull().default(""),
+  heroImage: varchar("hero_image", { length: 512 }).notNull().default(""),
+  heroAlt: varchar("hero_alt", { length: 255 }).notNull().default(""),
+  cardImage: varchar("card_image", { length: 512 }).notNull().default(""),
+  cardAlt: varchar("card_alt", { length: 255 }).notNull().default(""),
+  metaTitle: varchar("meta_title", { length: 255 }).notNull().default(""),
+  metaDescription: varchar("meta_description", { length: 512 }).notNull().default(""),
+  territoryPlan: varchar("territory_plan", { length: 512 }).notNull().default(""),
+  territoryPlanAlt: varchar("territory_plan_alt", { length: 255 }).notNull().default(""),
+  videoUrl: varchar("video_url", { length: 1024 }),
+  content: json("content").$type<PartnerContent>().notNull(),
+  sortOrder: int("sort_order").notNull().default(0),
+  isPublished: boolean("is_published").notNull().default(true),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow().onUpdateNow(),
+});
