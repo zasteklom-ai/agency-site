@@ -53,19 +53,36 @@ export function GuestReviewsCarousel() {
         className="mx-auto max-w-6xl"
       >
         <CarouselContent className="-ml-4">
-          {GUEST_REVIEWS.map((review) => (
+          {GUEST_REVIEWS.map((review, index) => (
             <CarouselItem
               key={review.id}
               className="pl-4 md:basis-1/2 lg:basis-1/3"
             >
-              <article className="flex h-full flex-col border border-[#e3e7e4] bg-white p-7 shadow-sm transition-all hover:-translate-y-1 hover:border-[#1f7567]/50 hover:shadow-lg">
+              <article
+                className="group flex h-full flex-col border border-[#e3e7e4] bg-white p-7 shadow-sm transition-all animate-review-card-in motion-reduce:animate-none hover:-translate-y-1 hover:border-[#1f7567]/50 hover:shadow-lg"
+                style={{ animationDelay: `${index * 90}ms` }}
+              >
                 <Quote size={26} className="text-[#1f7567]" />
                 <p className="mt-4 flex-1 text-sm leading-relaxed text-[#1f1f1f]/75">
                   {review.text}
                 </p>
                 <footer className="mt-6 flex items-center gap-3 border-t border-[#e3e7e4] pt-5">
-                  <div className="flex size-10 shrink-0 items-center justify-center rounded-full bg-[#1f7567]/10 text-sm font-semibold text-[#1f7567]">
-                    {review.author.charAt(0)}
+                  <div className="relative size-10 shrink-0 overflow-hidden rounded-full bg-[#1f7567]/10 ring-1 ring-[#1f7567]/15 transition-transform duration-300 group-hover:scale-110">
+                    <span
+                      aria-hidden="true"
+                      className="absolute inset-0 flex items-center justify-center text-sm font-semibold text-[#1f7567]"
+                    >
+                      {review.author.charAt(0)}
+                    </span>
+                    <img
+                      src={review.avatar}
+                      alt={`Аватар автора отзыва: ${review.author}`}
+                      loading="lazy"
+                      className="absolute inset-0 size-full object-cover"
+                      onError={(event) => {
+                        event.currentTarget.remove();
+                      }}
+                    />
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-semibold text-[#1f1f1f]">

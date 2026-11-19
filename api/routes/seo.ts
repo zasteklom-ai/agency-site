@@ -26,6 +26,7 @@ const STATIC_PAGES: { path: string; priority: string }[] = [
   { path: "/partners", priority: "0.7" },
   // Партнёрские площадки — статичный фронтенд, добавлять слаги сюда
   { path: "/partners/u-ozera", priority: "0.7" },
+  { path: "/partners/marinohall", priority: "0.7" },
   { path: "/reviews", priority: "0.6" },
   { path: "/about", priority: "0.4" },
   { path: "/contacts", priority: "0.4" },

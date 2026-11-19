@@ -4,9 +4,10 @@ export type GuestReview = {
   date: string;
   source: "Яндекс Карты" | "2ГИС";
   text: string;
+  avatar: string;
 };
 
-export const GUEST_REVIEWS: GuestReview[] = [
+const REVIEWS: Omit<GuestReview, "avatar">[] = [
   {
     id: "yandex-elena",
     author: "Елена",
@@ -120,3 +121,8 @@ export const GUEST_REVIEWS: GuestReview[] = [
     text: "Забронировала коттедж на двое суток для небольшого отдыха с подругами. Выбрала вариант с просторной гостиной и удобной планировкой — всем хватило места. Понравилась большая территория для вечерних посиделок. Оформление прошло быстро, отдых удался.",
   },
 ];
+
+export const GUEST_REVIEWS: GuestReview[] = REVIEWS.map((review) => ({
+  ...review,
+  avatar: `/avatars/reviews/${review.id}.svg`,
+}));
